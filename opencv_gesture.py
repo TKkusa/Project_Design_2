@@ -21,13 +21,41 @@ while True:
         imgwidth = img.shape[1]
 
         if result.multi_hand_landmarks:
-            for handLms in result.multi_hand_landmarks:
+            for hand_idx, handLms in enumerate(result.multi_hand_landmarks):                
                 mpdraw.draw_landmarks(img, handLms, mphands.HAND_CONNECTIONS, handLmsStyle, handConStyle)
-                for i, lm in enumerate(handLms.landmark):
-                    xpos = int(lm.x * imgwidth)
-                    ypos = int(lm.y * imgheight)
-                    cv2.putText(img, str(i), (xpos-25, ypos+5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 2)
-                    print(i, xpos, ypos)
+
+                thumb_tip = (handLms.landmark[4].x * imgwidth, handLms.landmark[4].y * imgheight)
+                thumb_base = (handLms.landmark[2].x * imgwidth, handLms.landmark[2].y * imgheight)
+                thumb_length = int(((thumb_tip[0] - thumb_base[0])**2 + (thumb_tip[1] - thumb_base[1])**2)**0.5)
+
+                index_finger_tip = (handLms.landmark[8].x * imgwidth, handLms.landmark[8].y * imgheight)
+                index_finger_base = (handLms.landmark[5].x * imgwidth, handLms.landmark[5].y * imgheight)   
+                index_length = int(((index_finger_tip[0] - index_finger_base[0])**2 + (index_finger_tip[1] - index_finger_base[1])**2)**0.5)
+
+                horizental_distance = int(index_finger_tip[0] - index_finger_base[0])
+                vertical_distance = int(index_finger_tip[1] - index_finger_base[1])
+
+                middle_finger_tip = (handLms.landmark[12].x * imgwidth, handLms.landmark[12].y * imgheight) 
+                middle_finger_base = (handLms.landmark[9].x * imgwidth, handLms.landmark[9].y * imgheight)
+                middle_length = int(((middle_finger_tip[0] - middle_finger_base[0])**2 + (middle_finger_tip[1] - middle_finger_base[1])**2)**0.5)
+
+                ring_finger_tip = (handLms.landmark[16].x * imgwidth, handLms.landmark[16].y * imgheight)
+                ring_finger_base = (handLms.landmark[13].x * imgwidth, handLms.landmark[13].y * imgheight)
+                ring_length = int(((ring_finger_tip[0] - ring_finger_base[0])**2 + (ring_finger_tip[1] - ring_finger_base[1])**2)**0.5)
+
+                pinky_finger_tip = (handLms.landmark[20].x * imgwidth, handLms.landmark[20].y * imgheight)
+                pinky_finger_base = (handLms.landmark[17].x * imgwidth, handLms.landmark[17].y * imgheight)
+                pinky_length = int(((pinky_finger_tip[0] - pinky_finger_base[0])**2 + (pinky_finger_tip[1] - pinky_finger_base[1])**2)**0.5)
+
+                if index_length > 70:
+                    if vertical_distance < -70:
+                        print("Pointing up")
+                    elif vertical_distance > 70:
+                        print("Pointing down")
+                    elif horizental_distance < -80:
+                        print("Pointing right")
+                    elif horizental_distance > 80:
+                        print("Pointing left")
 
         cTIME = time.time() 
         fps = 1/(cTIME - pTime) 
@@ -35,7 +63,6 @@ while True:
         cv2.putText(img, f"FPS : {int(fps)}", (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 3)
 
         cv2.imshow("img", img)
-
 
     if cv2.waitKey(1) == ord('q'):
         break
