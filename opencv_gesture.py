@@ -1,6 +1,7 @@
 import cv2 
 import mediapipe as mp
 import time
+import math
 
 cap = cv2.VideoCapture(0)
 mphands = mp.solutions.hands
@@ -11,10 +12,24 @@ handConStyle = mpdraw.DrawingSpec(color=(0, 255, 0), thickness=10, circle_radius
 pTime = 0
 cTIME = 0
 
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml') 
+
 while True:
     ret, img = cap.read()
     if ret:
+
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
+
+        #draw the rectangle around the face
+        for (x, y, w, h) in faces:
+            cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
+
+        
+
+        
         result = hands.process(imgRGB)
         # print(result.multi_hand_landmarks)
         imgheight = img.shape[0]
@@ -24,6 +39,7 @@ while True:
             for hand_idx, handLms in enumerate(result.multi_hand_landmarks):                
                 mpdraw.draw_landmarks(img, handLms, mphands.HAND_CONNECTIONS, handLmsStyle, handConStyle)
 
+                # the information of every fingers
                 thumb_tip = (handLms.landmark[4].x * imgwidth, handLms.landmark[4].y * imgheight)
                 thumb_base = (handLms.landmark[2].x * imgwidth, handLms.landmark[2].y * imgheight)
                 thumb_length = int(((thumb_tip[0] - thumb_base[0])**2 + (thumb_tip[1] - thumb_base[1])**2)**0.5)
@@ -47,7 +63,8 @@ while True:
                 pinky_finger_base = (handLms.landmark[17].x * imgwidth, handLms.landmark[17].y * imgheight)
                 pinky_length = int(((pinky_finger_tip[0] - pinky_finger_base[0])**2 + (pinky_finger_tip[1] - pinky_finger_base[1])**2)**0.5)
 
-                if index_length > 70:
+                # analyze the gesture
+                if index_length > 60:
                     if vertical_distance < -70:
                         print("Pointing up")
                     elif vertical_distance > 70:
