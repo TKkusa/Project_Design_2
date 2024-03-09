@@ -1,0 +1,37 @@
+2024/3/10 開發日誌
+---------------------
+
+主畫面UI class中
+def opencv() 中定義所有跟camera部分有關的行為，並由以下code置於另一thread進行
+
+vedio = threading.Thread(target=ui.opencv)
+vedio.start()
+
+經測試，處於另一thread的此function不能直接對UI object做更動，相關error message:
+QObject: Cannot create children for a parent that is in a different thread.
+Parent is QTextDocument(0x25c53e9ec50), parent's thread is QThread(0x25c52329ee0), current thread is QThread(0x25c5460e980)
+
+處理方法
+# signals for updating the message and image
+# avoid updating the GUI from a different thread
+update_message_signal = QtCore.pyqtSignal(str)
+update_image_signal = QtCore.pyqtSignal(QImage)
+
+def update_message(self, message):
+    self.textEdit_3.setText(message)
+
+def setupUi(self, MainWindow): 
+
+    ......
+
+    # connect the signals to the functions
+    self.update_message_signal.connect(self.update_message)   
+
+opencv()中的範例調用
+self.update_message_signal.emit("Welcome to VTABIRD! Camera is ready.")
+日後要對UI的元件做修改，透過signal.emit的方法
+--------------------------------------------------------------------------------------------------------------------
+
+修改materials.css.template檔案中的
+font-size: {{18|density(density_scale, density_interval=1)}}px;
+修正字體大小問題

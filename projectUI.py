@@ -16,20 +16,27 @@ import time
 
 
 
-class Ui_MainWindow(object):
+class Ui_MainWindow(QtCore.QObject):
+    # signals for updating the message and image
+    # avoid updating the GUI from a different thread
+    update_message_signal = QtCore.pyqtSignal(str)
+    update_image_signal = QtCore.pyqtSignal(QImage)
+
     def __init__(self):
         super().__init__()
-        self.ocv = False
+        self.ocv = True
+        self.statuscode = 0
 
     def quitButton_clicked(self):
         self.ocv = False        
         time.sleep(1)
         sys.exit()
-
-    def startButton_clicked(self):
-        self.textEdit_3.setText("Please wait for the camera showing up.")
-        self.ocv = True
         
+
+    # function for updating the message 
+    def update_message(self, message):
+        self.textEdit_3.setText(message)   
+    
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1100, 845)
@@ -39,7 +46,7 @@ class Ui_MainWindow(object):
 
         # text box for time limit
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(900, 730, 150, 40))
+        self.textEdit.setGeometry(QtCore.QRect(900, 730, 150, 50))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(24)       
@@ -50,17 +57,17 @@ class Ui_MainWindow(object):
 
         # text box for message
         self.textEdit_3 = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit_3.setGeometry(QtCore.QRect(50, 780, 1000, 40))
+        self.textEdit_3.setGeometry(QtCore.QRect(50, 800, 1000, 50))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(24)
         self.textEdit_3.setObjectName("textEdit_3")
-        self.textEdit_3.setText("Here comes the message for the user.")
+        self.textEdit_3.setText("Please wait for the camera to start.")
         self.textEdit_3.setReadOnly(True)
 
         # button for quit the application
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(950, 120, 100, 50))
+        self.pushButton.setGeometry(QtCore.QRect(1570, 780, 100, 50))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(24)
@@ -68,17 +75,6 @@ class Ui_MainWindow(object):
         self.pushButton.setObjectName("quitButton")
         self.pushButton.setText("Quit")
         self.pushButton.clicked.connect(self.quitButton_clicked)
-
-        #button for starting the camera
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(950, 50, 100, 50))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(24)
-        self.pushButton_2.setFont(font)
-        self.pushButton_2.setObjectName("startButton")
-        self.pushButton_2.setText("Start")
-        self.pushButton_2.clicked.connect(self.startButton_clicked)
 
         self.textEdit.raise_()
         self.textEdit_3.raise_()        
@@ -93,15 +89,20 @@ class Ui_MainWindow(object):
 
         # label for the camera
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(1100, 50, 720, 480))
+        self.label.setGeometry(QtCore.QRect(950, 50, 720, 480))
 
         # label for whiteboard
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(50, 50, 830, 720))
+        self.label_2.setGeometry(QtCore.QRect(50, 50, 830, 730))
         self.label_2.setStyleSheet("background-color: white;")
         self.label_2.setObjectName("label_2")
-                               
+        self.label_2.setStyleSheet("background-color: black;")
+
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        # connect the signals to the functions
+        self.update_message_signal.connect(self.update_message)
+
 
     # function for the camera
     def opencv(self):
@@ -109,6 +110,8 @@ class Ui_MainWindow(object):
         if not cap.isOpened():
             print("Error: Could not open camera.")
             exit()
+        else:
+            self.update_message_signal.emit("Welcome to VTABIRD! Camera is ready.")
         while self.ocv == True:
             ret, frame = cap.read()
             if not ret:
