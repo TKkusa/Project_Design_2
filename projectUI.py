@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QImage, QPixmap
 from qt_material import apply_stylesheet
 import time
-
+import random
 
 
 class Ui_MainWindow(QtCore.QObject):
@@ -32,7 +32,13 @@ class Ui_MainWindow(QtCore.QObject):
         time.sleep(1)
         sys.exit()
         
-
+    def startButton_clicked(self):
+        time.sleep(0.3)
+        XBound = random.randint(70, 450)
+        YBound = random.randint(70, 450)
+        self.labelC.setGeometry(QtCore.QRect(XBound, YBound, 720, 480))
+        pixmap = QPixmap("C:/Users/USER/Documents/GitHub/Project_Design_2/C.jpg")
+        self.labelC.setPixmap(pixmap)
     # function for updating the message 
     def update_message(self, message):
         self.textEdit_3.setText(message)   
@@ -103,6 +109,21 @@ class Ui_MainWindow(QtCore.QObject):
         # connect the signals to the functions
         self.update_message_signal.connect(self.update_message)
 
+        # button for starting(click and show the image at random place)
+        self.pushButton2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton2.setGeometry(QtCore.QRect(1570, 720, 100, 50))
+        font = QtGui.QFont()    
+        font.setFamily("Arial")
+        font.setPointSize(24)
+        self.pushButton2.setFont(font)
+        self.pushButton2.setObjectName("StartButton")
+        self.pushButton2.setText("Start")
+        self.pushButton2.clicked.connect(self.startButton_clicked)
+
+        # label for the image of "C"
+        self.labelC = QtWidgets.QLabel(self.centralwidget)
+        self.labelC.setGeometry(QtCore.QRect(70, 70, 720, 480))
+       
 
     # function for the camera
     def opencv(self):
