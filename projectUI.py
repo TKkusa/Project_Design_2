@@ -25,7 +25,8 @@ class Ui_MainWindow(QtCore.QObject):
     def __init__(self):
         super().__init__()
         self.ocv = True
-        self.statuscode = 0
+        self.imagedirection = ''
+        self.pointingdirection = ''
 
     def quitButton_clicked(self):
         self.ocv = False        
@@ -33,12 +34,49 @@ class Ui_MainWindow(QtCore.QObject):
         sys.exit()
         
     def startButton_clicked(self):
-        time.sleep(0.3)
-        XBound = random.randint(70, 450)
-        YBound = random.randint(70, 450)
+
+        # read image by opencv
+        img = cv2.imread("./C.jpg")
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        # image process
+        output_rotete_90 = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+        output_rotete_180 = cv2.rotate(img, cv2.ROTATE_180)
+        output_rotate_90_counterclockwise = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+        # random choose the rotate pattern
+        rotate_pattern = random.randint(0, 3)
+        if rotate_pattern == 0:
+            img = output_rotete_90
+            self.imagedirection = 'down'
+        elif rotate_pattern == 1:
+            img = output_rotete_180
+            self.imagedirection = 'left'
+        elif rotate_pattern == 2:
+            img = output_rotate_90_counterclockwise
+            self.imagedirection = 'up'
+        else:
+            img = img            
+            self.imagedirection = 'right'     
+        
+        #print the direction of the image
+        print(self.imagedirection)
+
+        # resize the image
+        img = cv2.resize(img, (100, 100))
+        height, width, channel = img.shape
+        bytesPerLine = channel * width
+
+        qimg = QImage(img, width, height, bytesPerLine, QImage.Format_RGB888)
+        canvas = QPixmap.fromImage(qimg)
+
+        XBound = random.randint(70, 700)
+        YBound = random.randint(-70, 450)
+        
         self.labelC.setGeometry(QtCore.QRect(XBound, YBound, 720, 480))
-        pixmap = QPixmap("C:/Users/USER/Documents/GitHub/Project_Design_2/C.jpg")
-        self.labelC.setPixmap(pixmap)
+
+        self.labelC.setPixmap(canvas)
+
     # function for updating the message 
     def update_message(self, message):
         self.textEdit_3.setText(message)   
@@ -49,6 +87,12 @@ class Ui_MainWindow(QtCore.QObject):
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
+        # change the title of the window
+        MainWindow.setWindowTitle("VTABIRD")
+
+        # change the icon of the window
+        MainWindow.setWindowIcon(QtGui.QIcon('./icon.png'))
 
         # text box for time limit
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
@@ -124,10 +168,15 @@ class Ui_MainWindow(QtCore.QObject):
         self.labelC = QtWidgets.QLabel(self.centralwidget)
         self.labelC.setGeometry(QtCore.QRect(70, 70, 720, 480))
        
-
     # function for the camera
     def opencv(self):
         cap = cv2.VideoCapture(0)
+        mphands = mp.solutions.hands
+        hands = mphands.Hands()
+        mpdraw = mp.solutions.drawing_utils
+        handLmsStyle = mpdraw.DrawingSpec(color=(0, 0, 255), thickness=5, circle_radius=2)
+        handConStyle = mpdraw.DrawingSpec(color=(0, 255, 0), thickness=10, circle_radius=2)
+
         if not cap.isOpened():
             print("Error: Could not open camera.")
             exit()
@@ -138,8 +187,77 @@ class Ui_MainWindow(QtCore.QObject):
             if not ret:
                 print("Error: Could not read frame.")
                 break
+
+            #adapt the information of the frame
             frame = cv2.resize(frame, (800, 600))
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            #flip the frame
+            frame = cv2.flip(frame, 1)
+          
+            result = hands.process(frame)
+            imgheight = frame.shape[0]
+            imgwidth = frame.shape[1]
+
+            if result.multi_hand_landmarks:
+                for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
+                    mpdraw.draw_landmarks(frame, handLms, mphands.HAND_CONNECTIONS, handLmsStyle, handConStyle) 
+                    # the information of every fingers
+                    # thumb
+                    thumb_tip = (handLms.landmark[4].x * imgwidth, handLms.landmark[4].y * imgheight)
+                    thumb_base = (handLms.landmark[2].x * imgwidth, handLms.landmark[2].y * imgheight)
+                    thumb_length = int(((thumb_tip[0] - thumb_base[0])**2 + (thumb_tip[1] - thumb_base[1])**2)**0.5)
+                    horizental_distance_thumb = int(thumb_tip[0] - thumb_base[0])
+                    vertical_distance_thumb = int(thumb_tip[1] - thumb_base[1])
+                    
+
+
+                    # index
+                    index_finger_tip = (handLms.landmark[8].x * imgwidth, handLms.landmark[8].y * imgheight)
+                    index_finger_base = (handLms.landmark[5].x * imgwidth, handLms.landmark[5].y * imgheight)   
+                    index_length = int(((index_finger_tip[0] - index_finger_base[0])**2 + (index_finger_tip[1] - index_finger_base[1])**2)**0.5)
+                    horizental_distance_index = int(index_finger_tip[0] - index_finger_base[0])
+                    vertical_distance_index = int(index_finger_tip[1] - index_finger_base[1])
+
+                    # middle
+                    middle_finger_tip = (handLms.landmark[12].x * imgwidth, handLms.landmark[12].y * imgheight) 
+                    middle_finger_base = (handLms.landmark[9].x * imgwidth, handLms.landmark[9].y * imgheight)
+                    middle_length = int(((middle_finger_tip[0] - middle_finger_base[0])**2 + (middle_finger_tip[1] - middle_finger_base[1])**2)**0.5)
+                    horizental_distance_middle = int(middle_finger_tip[0] - middle_finger_base[0])
+                    vertical_distance_middle = int(middle_finger_tip[1] - middle_finger_base[1])
+
+                    # ring
+                    ring_finger_tip = (handLms.landmark[16].x * imgwidth, handLms.landmark[16].y * imgheight)
+                    ring_finger_base = (handLms.landmark[13].x * imgwidth, handLms.landmark[13].y * imgheight)
+                    ring_length = int(((ring_finger_tip[0] - ring_finger_base[0])**2 + (ring_finger_tip[1] - ring_finger_base[1])**2)**0.5)
+                    horizental_distance_ring = int(ring_finger_tip[0] - ring_finger_base[0])
+                    vertical_distance_ring = int(ring_finger_tip[1] - ring_finger_base[1])
+
+                    # pinky
+                    pinky_finger_tip = (handLms.landmark[20].x * imgwidth, handLms.landmark[20].y * imgheight)
+                    pinky_finger_base = (handLms.landmark[17].x * imgwidth, handLms.landmark[17].y * imgheight)
+                    pinky_length = int(((pinky_finger_tip[0] - pinky_finger_base[0])**2 + (pinky_finger_tip[1] - pinky_finger_base[1])**2)**0.5)
+                    horizental_distance_pinky = int(pinky_finger_tip[0] - pinky_finger_base[0])
+                    vertical_distance_pinky = int(pinky_finger_tip[1] - pinky_finger_base[1])
+
+                    
+                    if index_length > 60:
+                        if vertical_distance_index < -60:
+                            self.update_message_signal.emit("Pointing up")
+                            self.pointingdirection = 'up'
+                        elif vertical_distance_index > 60:
+                            self.update_message_signal.emit("Pointing down")
+                            self.pointingdirection = 'down'
+                        elif horizental_distance_index < -60:
+                            self.update_message_signal.emit("Pointing left")
+                            self.pointingdirection = 'left'
+                        elif horizental_distance_index > 60:
+                            self.update_message_signal.emit("Pointing right")   
+                            self.pointingdirection = 'right'
+                    else:
+                        self.update_message_signal.emit("")
+
+
             height, width, channel = frame.shape
             bytesPerLine = channel * width
             qimg = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888)
