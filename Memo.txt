@@ -1,6 +1,5 @@
 2024/3/10 開發日誌
 ---------------------
-
 主畫面UI class中
 def opencv() 中定義所有跟camera部分有關的行為，並由以下code置於另一thread進行
 
@@ -35,3 +34,16 @@ self.update_message_signal.emit("Welcome to VTABIRD! Camera is ready.")
 修改materials.css.template檔案中的
 font-size: {{18|density(density_scale, density_interval=1)}}px;
 修正字體大小問題
+
+
+
+2024/3/16 開發日誌
+---------------------
+完成視力檢查主要功能
+待解決:
+☆測定距離
+遠測近測的臨床表現
+☆判定哪隻手為測試手
+圖片放大縮小倍率
+完成三個跳下一等級
+☆檢驗報告的window

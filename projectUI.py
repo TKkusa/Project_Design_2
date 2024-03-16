@@ -24,16 +24,17 @@ class Ui_MainWindow(QtCore.QObject):
         self.imagedirection = ' '
         self.pointingdirection = ''
 
+    # button for quit the application
     def quitButton_clicked(self):
         self.ocv = False        
         time.sleep(1)
         sys.exit()      
 
+    # start button function, will be replaced by gesture recognition
     def startButton_clicked(self):
         self.teststart = True
         self.textEdit_3.setText("Ready 5 seconds ro start, please point to the notch direction.")
         
-
     # function for updating the message 
     def update_message(self, message):
         self.textEdit_3.setText(message)   
@@ -130,7 +131,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.mytimer.timeout.connect(self.onTimer)
         self.mytimer.start(1000)
         self.counter = 5
-       
+    
+    # function for the image
     def imageprocess(self):
         img = cv2.imread("./C.jpg")
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -152,7 +154,6 @@ class Ui_MainWindow(QtCore.QObject):
             img = img
             self.imagedirection = 'right'
 
-        print(self.imagedirection)
 
         img = cv2.resize(img, (self.setsize, self.setsize))
         height, width, channel = img.shape
@@ -175,7 +176,7 @@ class Ui_MainWindow(QtCore.QObject):
             self.textEdit.setText(str(self.counter)+"s")
             if self.counter == 0:
                 self.pointstart = True
-                self.counter = 5
+                self.counter = 4
                 if self.imagedirection == self.pointingdirection:     
                     if self.setsize > 10:             
                         self.setsize = self.setsize // 2
@@ -185,13 +186,13 @@ class Ui_MainWindow(QtCore.QObject):
 
                 self.imageprocess()
         
-
     # function for the camera
     def opencv(self):
 
         cap = cv2.VideoCapture(0)
         mphands = mp.solutions.hands
         hands = mphands.Hands()
+        
         mpdraw = mp.solutions.drawing_utils
         handLmsStyle = mpdraw.DrawingSpec(color=(0, 0, 255), thickness=5, circle_radius=2)
         handConStyle = mpdraw.DrawingSpec(color=(0, 255, 0), thickness=10, circle_radius=2)
@@ -201,6 +202,8 @@ class Ui_MainWindow(QtCore.QObject):
             exit()
         else:
             self.update_message_signal.emit("Welcome to VTABIRD! Camera is ready, Please click the start button.")
+
+        # loop for the gesture recognition
         while self.ocv == True:
             ret, frame = cap.read()
             if not ret:
@@ -217,10 +220,14 @@ class Ui_MainWindow(QtCore.QObject):
             result = hands.process(frame)
             imgheight = frame.shape[0]
             imgwidth = frame.shape[1]
+            
 
             if result.multi_hand_landmarks:
                 for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
-
+                    mpdraw.draw_landmarks(frame, handLms, mphands.HAND_CONNECTIONS, handLmsStyle, handConStyle)
+                    # get the handness 
+                    handness_label = "Left" if result.multi_handedness[hand_idx].classification[0].label == "Left" else "Right"
+                 
                     # the information of every fingers
                     # thumb
                     thumb_tip = (handLms.landmark[4].x * imgwidth, handLms.landmark[4].y * imgheight)
@@ -258,25 +265,19 @@ class Ui_MainWindow(QtCore.QObject):
                     vertical_distance_pinky = int(pinky_finger_tip[1] - pinky_finger_base[1])
 
                     # block to analyze the gesture
-                    if index_length > 60:
+                    if index_length > 60 and self.pointstart == True and handness_label == "Right":
                         if vertical_distance_index < -60:
-                            if self.pointstart == True:
                                 self.update_message_signal.emit("Pointing up")
                                 self.pointingdirection = 'up'
                         elif vertical_distance_index > 60:
-                            if self.pointstart == True:
                                 self.update_message_signal.emit("Pointing down")
                                 self.pointingdirection = 'down'
                         elif horizental_distance_index < -60:
-                            if self.pointstart == True:
                                 self.update_message_signal.emit("Pointing left")
                                 self.pointingdirection = 'left'
                         elif horizental_distance_index > 60:
-                            if self.pointstart == True:
                                 self.update_message_signal.emit("Pointing right")   
                                 self.pointingdirection = 'right'
-                    else:
-                        self.update_message_signal.emit("")
 
             # get the frame information
             height, width, channel = frame.shape

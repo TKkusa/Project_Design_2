@@ -19,9 +19,6 @@ while True:
     if ret:
 
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-      
-
         
         result = hands.process(imgRGB)
         # print(result.multi_hand_landmarks)
@@ -31,6 +28,9 @@ while True:
         if result.multi_hand_landmarks:
             for hand_idx, handLms in enumerate(result.multi_hand_landmarks):                
                 mpdraw.draw_landmarks(img, handLms, mphands.HAND_CONNECTIONS, handLmsStyle, handConStyle)
+                for i, lm in enumerate(handLms.landmark):
+                    print(hand_idx, i, int(lm.x), int(lm.y))
+
 
                 # the information of every fingers
                 thumb_tip = (handLms.landmark[4].x * imgwidth, handLms.landmark[4].y * imgheight)
