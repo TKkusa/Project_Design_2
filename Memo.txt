@@ -41,6 +41,6 @@ font-size: {{18|density(density_scale, density_interval=1)}}px;
 ---------------------
 完成視力檢查主要功能
 待解決:
-☆測定距離
+☆測定距離(可能無解)
 遠測近測的臨床表現
 ☆檢驗報告的window

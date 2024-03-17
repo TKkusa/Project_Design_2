@@ -14,3 +14,6 @@ visionlevel_correctimes = {
 lowest_wrongtimes = 0
 level_now = 0.1
 
+lefteye_vision = 0.1
+righteye_vision = 0.1
+

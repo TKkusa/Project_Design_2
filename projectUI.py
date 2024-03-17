@@ -288,6 +288,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.cap = cv2.VideoCapture(0)
         mphands = mp.solutions.hands
         hands = mphands.Hands()
+        mp_face_detection = mp.solutions.face_detection
         
         mpdraw = mp.solutions.drawing_utils
         handLmsStyle = mpdraw.DrawingSpec(color=(0, 0, 255), thickness=5, circle_radius=2)
@@ -315,16 +316,28 @@ class Ui_MainWindow(QtCore.QObject):
             frame = cv2.flip(frame, 1)
           
             result = hands.process(frame)
+
             imgheight = frame.shape[0]
             imgwidth = frame.shape[1]
-            
+
+            if self.teststart == False:
+                with mp_face_detection.FaceDetection(min_detection_confidence=0.6) as face_detection:
+                    result_face = face_detection.process(frame)
+                    if result_face.detections:
+                        for detection in result_face.detections:
+                            mpdraw.draw_detection(frame, detection)
+                            lefteye = int(detection.location_data.relative_keypoints[1].x * imgwidth), int(detection.location_data.relative_keypoints[1].y * imgheight)
+                            righteye = int(detection.location_data.relative_keypoints[0].x * imgwidth), int(detection.location_data.relative_keypoints[0].y * imgheight)
+                            eyes_xdistance = lefteye[0] - righteye[0]
+                            eyes_ydistance = lefteye[1] - righteye[1]
+                            print(eyes_xdistance, eyes_ydistance)
 
             if result.multi_hand_landmarks:
                 for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
                     mpdraw.draw_landmarks(frame, handLms, mphands.HAND_CONNECTIONS, handLmsStyle, handConStyle)
                     # get the handness 
-                    handness_label = "Left" if result.multi_handedness[hand_idx].classification[0].label == "Left" else "Right"
-                 
+                    handness_label = "Left" if result.multi_handedness[hand_idx].classification[0].label == "Left" else "Right"  
+
                     # the information of every fingers
                     # thumb
                     thumb_tip = (handLms.landmark[4].x * imgwidth, handLms.landmark[4].y * imgheight)
@@ -361,7 +374,7 @@ class Ui_MainWindow(QtCore.QObject):
                     horizental_distance_pinky = int(pinky_finger_tip[0] - pinky_finger_base[0])
                     vertical_distance_pinky = int(pinky_finger_tip[1] - pinky_finger_base[1])
 
-                    # block to analyze the gesture
+                    # gesture recognition, only right hand
                     if index_length > 60 and self.pointstart == True and handness_label == "Right":
                         if vertical_distance_index < -60:
                             self.update_message_signal.emit("Pointing up")
