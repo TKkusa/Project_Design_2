@@ -52,6 +52,9 @@ class Ui_MainWindow(QtCore.QObject):
         # change the icon of the window
         MainWindow.setWindowIcon(QtGui.QIcon('./icon.png'))
 
+        # only close button available
+        MainWindow.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
+
         # text box for time limit
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setGeometry(QtCore.QRect(900, 730, 150, 50))
