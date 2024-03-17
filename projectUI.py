@@ -5,8 +5,11 @@ from PyQt5.QtGui import QImage, QPixmap
 from qt_material import apply_stylesheet
 import time
 import random
+import eyetest_var as etv
 
 eventTime = 5
+etv.lowest_wrongtimes = -1
+etv.level_now = 0.1
 
 class Ui_MainWindow(QtCore.QObject):
     # signals for updating the message and image
@@ -19,15 +22,14 @@ class Ui_MainWindow(QtCore.QObject):
         self.ocv = True
         self.teststart = False
         self.pointstart = False
-        self.setsize = 50
+        self.setsize = 100           # original size of the image is actually 100
         self.imagedirection = ' '
         self.pointingdirection = ''
-        self.cap = None  # Add a variable to store the camera capture object
+        self.cap = None             # Add a variable to store the camera capture object
 
     # button for quit the application
     def quitButton_clicked(self):
         self.ocv = False        
-        time.sleep(1)
         sys.exit()      
 
     # start button function, will be replaced by gesture recognition
@@ -171,8 +173,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.labelC.setGeometry(QtCore.QRect(XBound, YBound, 720, 480))
 
         self.labelC.setPixmap(canvas)
-
-    # timer event
+ 
+    # eyetest flow event
     def onTimer(self):
         if self.teststart == True:
             self.counter = self.counter - 1
@@ -180,15 +182,107 @@ class Ui_MainWindow(QtCore.QObject):
             if self.counter == 0:
                 self.pointstart = True
                 self.counter = 4
-                if self.imagedirection == self.pointingdirection:     
-                    if self.setsize > 10:             
-                        self.setsize = self.setsize // 2
-                else:
-                    if self.setsize < 100:
-                        self.setsize = self.setsize * 2
 
+                self.vision_test()
+                self.check_vision_level()
                 self.imageprocess()
-        
+
+    # vision test event handler
+    def vision_test(self):
+        if etv.level_now == 0.1:     
+            if self.pointingdirection == self.imagedirection:  
+                etv.visionlevel_correctimes[etv.level_now] += 1           
+                etv.level_now = 0.2 
+                self.setsize = 50
+            else:
+                etv.lowest_wrongtimes += 1
+                self.setsize = 100
+        elif etv.level_now == 0.2:
+            if self.pointingdirection == self.imagedirection:
+                etv.visionlevel_correctimes[etv.level_now] += 1
+                etv.level_now = 0.3
+                self.setsize = 33                       
+            else:
+                etv.level_now = 0.1
+                self.setsize = 100
+        elif etv.level_now == 0.3:
+            if self.pointingdirection == self.imagedirection:
+                etv.visionlevel_correctimes[etv.level_now] += 1
+                etv.level_now = 0.4
+                self.setsize = 25
+            else:
+                etv.level_now = 0.2
+                self.setsize = 50
+        elif etv.level_now == 0.4:
+            if self.pointingdirection == self.imagedirection:
+                etv.visionlevel_correctimes[etv.level_now] += 1
+                etv.level_now = 0.5
+                self.setsize = 20
+            else:
+                etv.level_now = 0.3
+                self.setsize = 33
+        elif etv.level_now == 0.5:
+            if self.pointingdirection == self.imagedirection:
+                etv.visionlevel_correctimes[etv.level_now] += 1
+                etv.level_now = 0.6
+                self.setsize = 17
+            else:
+                etv.level_now = 0.4
+                self.setsize = 25
+        elif etv.level_now == 0.6:
+            if self.pointingdirection == self.imagedirection:
+                etv.visionlevel_correctimes[etv.level_now] += 1
+                etv.level_now = 0.7
+                self.setsize = 14
+            else:
+                etv.level_now = 0.5
+                self.setsize = 20
+        elif etv.level_now == 0.7:
+            if self.pointingdirection == self.imagedirection:
+                etv.visionlevel_correctimes[etv.level_now] += 1
+                etv.level_now = 0.8
+                self.setsize = 12
+            else:
+                etv.level_now = 0.6
+                self.setsize = 17
+        elif etv.level_now == 0.8:
+            if self.pointingdirection == self.imagedirection:
+                etv.visionlevel_correctimes[etv.level_now] += 1
+                etv.level_now = 0.9
+                self.setsize = 11
+            else:
+                etv.level_now = 0.7
+                self.setsize = 14
+        elif etv.level_now == 0.9:
+            if self.pointingdirection == self.imagedirection:
+
+                etv.visionlevel_correctimes[etv.level_now] += 1
+                etv.level_now = 1.0
+                self.setsize = 10
+            else:
+                etv.level_now = 0.8
+                self.setsize = 12
+        elif etv.level_now == 1.0:
+            if self.pointingdirection == self.imagedirection:
+                etv.visionlevel_correctimes[etv.level_now] += 1
+                self.setsize = 10
+            else:
+                etv.level_now = 0.9
+                self.setsize = 11
+
+    # check if any vision level has reached 3 correct times
+    # if so, switch to report UI window
+    def check_vision_level(self):
+        if etv.lowest_wrongtimes == 3:
+            print('Your vision is less than 0.1, please consult a doctor.') 
+            self.ocv = False
+            sys.exit()
+        for level, times in etv.visionlevel_correctimes.items():
+            if times >= 3:
+                print(f"Your vision level is {level}.")
+                self.ocv = False
+                sys.exit()
+
     # function for the camera
     def opencv(self):
         self.cap = cv2.VideoCapture(0)
@@ -204,6 +298,7 @@ class Ui_MainWindow(QtCore.QObject):
             exit()
         else:
             self.update_message_signal.emit("Welcome to VTABIRD! Camera is ready, Please click the start button.")
+            
 
         # loop for the gesture recognition
         while self.ocv == True:
@@ -269,17 +364,17 @@ class Ui_MainWindow(QtCore.QObject):
                     # block to analyze the gesture
                     if index_length > 60 and self.pointstart == True and handness_label == "Right":
                         if vertical_distance_index < -60:
-                                self.update_message_signal.emit("Pointing up")
-                                self.pointingdirection = 'up'
+                            self.update_message_signal.emit("Pointing up")
+                            self.pointingdirection = 'up'
                         elif vertical_distance_index > 60:
-                                self.update_message_signal.emit("Pointing down")
-                                self.pointingdirection = 'down'
+                            self.update_message_signal.emit("Pointing down")
+                            self.pointingdirection = 'down'
                         elif horizental_distance_index < -60:
-                                self.update_message_signal.emit("Pointing left")
-                                self.pointingdirection = 'left'
+                            self.update_message_signal.emit("Pointing left")
+                            self.pointingdirection = 'left'
                         elif horizental_distance_index > 60:
-                                self.update_message_signal.emit("Pointing right")   
-                                self.pointingdirection = 'right'
+                            self.update_message_signal.emit("Pointing right")   
+                            self.pointingdirection = 'right'
 
             # get the frame information
             height, width, channel = frame.shape
@@ -296,8 +391,6 @@ class Ui_MainWindow(QtCore.QObject):
     def close_camera(self):
         if self.cap is not None and self.cap.isOpened():
             self.ocv = False
-            self.cap.release()
-            cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":

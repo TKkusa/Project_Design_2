@@ -43,7 +43,4 @@ font-size: {{18|density(density_scale, density_interval=1)}}px;
 待解決:
 ☆測定距離
 遠測近測的臨床表現
-☆判定哪隻手為測試手
-圖片放大縮小倍率
-完成三個跳下一等級
 ☆檢驗報告的window
