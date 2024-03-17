@@ -6,7 +6,6 @@ from qt_material import apply_stylesheet
 import time
 import random
 
-
 eventTime = 5
 
 class Ui_MainWindow(QtCore.QObject):
@@ -23,6 +22,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.setsize = 50
         self.imagedirection = ' '
         self.pointingdirection = ''
+        self.cap = None  # Add a variable to store the camera capture object
 
     # button for quit the application
     def quitButton_clicked(self):
@@ -172,7 +172,7 @@ class Ui_MainWindow(QtCore.QObject):
 
         self.labelC.setPixmap(canvas)
 
-    # timer evemt
+    # timer event
     def onTimer(self):
         if self.teststart == True:
             self.counter = self.counter - 1
@@ -191,8 +191,7 @@ class Ui_MainWindow(QtCore.QObject):
         
     # function for the camera
     def opencv(self):
-
-        cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(0)
         mphands = mp.solutions.hands
         hands = mphands.Hands()
         
@@ -200,7 +199,7 @@ class Ui_MainWindow(QtCore.QObject):
         handLmsStyle = mpdraw.DrawingSpec(color=(0, 0, 255), thickness=5, circle_radius=2)
         handConStyle = mpdraw.DrawingSpec(color=(0, 255, 0), thickness=10, circle_radius=2)
 
-        if not cap.isOpened():
+        if not self.cap.isOpened():
             print("Error: Could not open camera.")
             exit()
         else:
@@ -208,16 +207,16 @@ class Ui_MainWindow(QtCore.QObject):
 
         # loop for the gesture recognition
         while self.ocv == True:
-            ret, frame = cap.read()
+            ret, frame = self.cap.read()
             if not ret:
                 print("Error: Could not read frame.")
                 break
 
-            #adapt the information of the frame
+            # adapt the information of the frame
             frame = cv2.resize(frame, (800, 600))
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-            #flip the frame
+            # flip the frame
             frame = cv2.flip(frame, 1)
           
             result = hands.process(frame)
@@ -290,8 +289,15 @@ class Ui_MainWindow(QtCore.QObject):
             qimg = QImage(frame.data, width, height, bytesPerLine, QImage.Format_RGB888)
             self.label.setPixmap(QPixmap.fromImage(qimg))
         
-        cap.release()
+        self.cap.release()
         cv2.destroyAllWindows()
+
+    # Add method to close the camera
+    def close_camera(self):
+        if self.cap is not None and self.cap.isOpened():
+            self.ocv = False
+            self.cap.release()
+            cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
@@ -306,5 +312,8 @@ if __name__ == "__main__":
     vedio = threading.Thread(target=ui.opencv)
     vedio.start()
     MainWindow.showMaximized()
+
+    # Connect the close event of the main window to close the camera
+    MainWindow.closeEvent = ui.close_camera
 
     sys.exit(app.exec_())
