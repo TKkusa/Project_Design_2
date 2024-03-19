@@ -3,11 +3,9 @@ import mediapipe as mp
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QImage, QPixmap
 from qt_material import apply_stylesheet
-import time
 import random
 import eyetest_var as etv
 
-eventTime = 5
 etv.lowest_wrongtimes = -1
 etv.level_now = 0.1
 
@@ -19,28 +17,35 @@ class Ui_MainWindow(QtCore.QObject):
 
     def __init__(self):
         super().__init__()
+        self.round = 1
+        self.counter = 16
+        self.testeye_now = 'right'
         self.ocv = True
         self.teststart = False
         self.pointstart = False
-        self.setsize = 100           # original size of the image is actually 100
+        self.setsize = 100           
         self.imagedirection = ' '
         self.pointingdirection = ''
-        self.cap = None             # Add a variable to store the camera capture object
+        self.cap = None              
 
     # button for quit the application
     def quitButton_clicked(self):
         self.ocv = False        
         sys.exit()      
 
+
     # start button function, will be replaced by gesture recognition
     def startButton_clicked(self):
         self.teststart = True
-        self.textEdit_3.setText("Ready 5 seconds ro start, please point to the notch direction.")
+        self.pushButton2.setVisible(False)
+        self.textEdit_3.setText("Get ready, please cover left eye and point with your right hand.")
         
+
     # function for updating the message 
     def update_message(self, message):
         self.textEdit_3.setText(message)   
     
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1100, 845)
@@ -62,7 +67,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit.setGeometry(QtCore.QRect(900, 730, 150, 50))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(24)       
+        font.setPointSize(18)       
         self.textEdit.setFont(font)
         self.textEdit.setObjectName("textEdit")
         self.textEdit.setText("5s")
@@ -73,7 +78,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_3.setGeometry(QtCore.QRect(50, 800, 1000, 50))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(24)
+        font.setPointSize(18)
         self.textEdit_3.setObjectName("textEdit_3")
         self.textEdit_3.setText("Please wait for the camera.")
         self.textEdit_3.setReadOnly(True)
@@ -83,7 +88,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton.setGeometry(QtCore.QRect(1570, 780, 100, 50))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(24)
+        font.setPointSize(18)
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("quitButton")
         self.pushButton.setText("Quit")
@@ -121,7 +126,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton2.setGeometry(QtCore.QRect(1570, 720, 100, 50))
         font = QtGui.QFont()    
         font.setFamily("Arial")
-        font.setPointSize(24)
+        font.setPointSize(18)
         self.pushButton2.setFont(font)
         self.pushButton2.setObjectName("StartButton")
         self.pushButton2.setText("Start")
@@ -135,8 +140,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.mytimer = QtCore.QTimer()
         self.mytimer.timeout.connect(self.onTimer)
         self.mytimer.start(1000)
-        self.counter = 5
     
+
     # function for the image
     def imageprocess(self):
         img = cv2.imread("./C.jpg")
@@ -163,6 +168,7 @@ class Ui_MainWindow(QtCore.QObject):
         img = cv2.resize(img, (self.setsize, self.setsize))
         height, width, channel = img.shape
         bytesPerLine = channel * width
+        
 
         qimg = QImage(img, width, height, bytesPerLine, QImage.Format_RGB888)
         canvas = QPixmap.fromImage(qimg)
@@ -174,18 +180,38 @@ class Ui_MainWindow(QtCore.QObject):
 
         self.labelC.setPixmap(canvas)
  
+
     # eyetest flow event
     def onTimer(self):
         if self.teststart == True:
             self.counter = self.counter - 1
             self.textEdit.setText(str(self.counter)+"s")
             if self.counter == 0:
+                self.labelC.setVisible(True)
                 self.pointstart = True
                 self.counter = 4
+
+                print(etv.visionlevel_correctimes, etv.lowest_wrongtimes, etv.level_now)
 
                 self.vision_test()
                 self.check_vision_level()
                 self.imageprocess()
+
+
+    # reset every value vision_correctimes dictionary to 0
+    def reset_and_init(self):
+        for level, times in etv.visionlevel_correctimes.items():
+            etv.visionlevel_correctimes[level] = 0
+        self.pointstart = False
+        self.setsize = 100           
+        self.imagedirection = ' '
+        self.pointingdirection = ''
+        self.round = 2
+        self.counter = 16
+        self.labelC.setVisible(False)
+        etv.lowest_wrongtimes = -1
+        etv.level_now = 0.1
+
 
     # vision test event handler
     def vision_test(self):
@@ -270,24 +296,46 @@ class Ui_MainWindow(QtCore.QObject):
                 etv.level_now = 0.9
                 self.setsize = 11
 
-    # check if any vision level has reached 3 correct times
-    # if so, switch to report UI window
+
+    # check the vision level of two eyes
     def check_vision_level(self):
-        if etv.lowest_wrongtimes == 3:
-            print('Your vision is less than 0.1, please consult a doctor.') 
-            self.ocv = False
-            sys.exit()
-        for level, times in etv.visionlevel_correctimes.items():
-            if times >= 3:
-                print(f"Your vision level is {level}.")
+        if self.round == 1:
+            if etv.lowest_wrongtimes == 3:
+                # show the result
+                print(f'Your {self.testeye_now} eye is less than 0.1') 
+                self.textEdit_3.setText("Round 2, please cover your right eye and point with your left hand.")
+            
+                # initialize
+                self.reset_and_init()
+                self.testeye_now = 'left'
+            for level, times in etv.visionlevel_correctimes.items():
+                if times >= 3:
+                    # show the result
+                    print(f"Your {self.testeye_now} vision level is {level}.")
+                    self.textEdit_3.setText("Round 2, please cover your right eye and point with your left hand.")
+
+                    # initialize
+                    self.reset_and_init()
+                    self.testeye_now = 'left'
+        elif self.round == 2:    
+            if etv.lowest_wrongtimes == 3:
+                print(f'Your {self.testeye_now} eye is less than 0.1')
                 self.ocv = False
                 sys.exit()
+            for level, times in etv.visionlevel_correctimes.items():
+                if times >= 3:
+                    print(f"Your {self.testeye_now} vision level is {level}.")
+                    self.ocv = False
+                    sys.exit()
+
 
     # function for the camera
     def opencv(self):
         self.cap = cv2.VideoCapture(0)
+
         mphands = mp.solutions.hands
         hands = mphands.Hands()
+        
         mp_face_detection = mp.solutions.face_detection
         
         mpdraw = mp.solutions.drawing_utils
@@ -320,6 +368,7 @@ class Ui_MainWindow(QtCore.QObject):
             imgheight = frame.shape[0]
             imgwidth = frame.shape[1]
 
+            # face detection, get the distance between eyes
             if self.teststart == False:
                 with mp_face_detection.FaceDetection(min_detection_confidence=0.6) as face_detection:
                     result_face = face_detection.process(frame)
@@ -329,8 +378,7 @@ class Ui_MainWindow(QtCore.QObject):
                             lefteye = int(detection.location_data.relative_keypoints[1].x * imgwidth), int(detection.location_data.relative_keypoints[1].y * imgheight)
                             righteye = int(detection.location_data.relative_keypoints[0].x * imgwidth), int(detection.location_data.relative_keypoints[0].y * imgheight)
                             eyes_xdistance = lefteye[0] - righteye[0]
-                            eyes_ydistance = lefteye[1] - righteye[1]
-                            print(eyes_xdistance, eyes_ydistance)
+                            print(eyes_xdistance)
 
             if result.multi_hand_landmarks:
                 for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
@@ -374,20 +422,22 @@ class Ui_MainWindow(QtCore.QObject):
                     horizental_distance_pinky = int(pinky_finger_tip[0] - pinky_finger_base[0])
                     vertical_distance_pinky = int(pinky_finger_tip[1] - pinky_finger_base[1])
 
-                    # gesture recognition, only right hand
-                    if index_length > 60 and self.pointstart == True and handness_label == "Right":
-                        if vertical_distance_index < -60:
-                            self.update_message_signal.emit("Pointing up")
-                            self.pointingdirection = 'up'
-                        elif vertical_distance_index > 60:
-                            self.update_message_signal.emit("Pointing down")
-                            self.pointingdirection = 'down'
-                        elif horizental_distance_index < -60:
-                            self.update_message_signal.emit("Pointing left")
-                            self.pointingdirection = 'left'
-                        elif horizental_distance_index > 60:
-                            self.update_message_signal.emit("Pointing right")   
-                            self.pointingdirection = 'right'
+                    # gesture recognition, round 1 right hand
+                    if index_length > 60 and self.pointstart == True:
+                        if (handness_label == "Right" and self.round == 1) or (handness_label == "Left" and self.round == 2):
+                            if vertical_distance_index < -60:
+                                self.update_message_signal.emit("Pointing up")
+                                self.pointingdirection = 'up'
+                            elif vertical_distance_index > 60:
+                                self.update_message_signal.emit("Pointing down")
+                                self.pointingdirection = 'down'
+                            elif horizental_distance_index < -60:
+                                self.update_message_signal.emit("Pointing left")
+                                self.pointingdirection = 'left'
+                            elif horizental_distance_index > 60:
+                                self.update_message_signal.emit("Pointing right")   
+                                self.pointingdirection = 'right'
+
 
             # get the frame information
             height, width, channel = frame.shape
@@ -399,6 +449,7 @@ class Ui_MainWindow(QtCore.QObject):
         
         self.cap.release()
         cv2.destroyAllWindows()
+
 
     # Add method to close the camera
     def close_camera(self):

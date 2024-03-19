@@ -72,14 +72,11 @@ def plot_face_blendshapes_bar_graph(face_blendshapes):
 
 # Create a FaceLandmarker object
 base_options = python.BaseOptions(model_asset_path='face_landmarker_v2_with_blendshapes.task')
-options = vision.FaceLandmarkerOptions(base_options=base_options,
-                                       output_face_blendshapes=True,
-                                       output_facial_transformation_matrixes=True,
-                                       num_faces=1)
+options = vision.FaceLandmarkerOptions(base_options=base_options, output_face_blendshapes=True, output_facial_transformation_matrixes=True, num_faces=1)
 detector = vision.FaceLandmarker.create_from_options(options)
 
 # Detect face landmarks from the input image
-image = mp.Image.create_from_file("S__10772484.jpg")#change "S__10772484.jpg" to the file you need
+image = mp.Image.create_from_file("./tk.jpg")# change "S__10772484.jpg" to the file you need
 detection_result = detector.detect(image)
 
 # Process the detection result and visualize it
