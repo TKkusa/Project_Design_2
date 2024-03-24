@@ -14,6 +14,7 @@ class Ui_MainWindow(QtCore.QObject):
     # avoid updating the GUI from a different thread
     update_message_signal = QtCore.pyqtSignal(str)
     update_image_signal = QtCore.pyqtSignal(QImage)
+    hide_pushbutton2_signal = QtCore.pyqtSignal(bool)
 
     def __init__(self):
         super().__init__()
@@ -33,6 +34,9 @@ class Ui_MainWindow(QtCore.QObject):
         self.ocv = False        
         sys.exit()      
 
+    # function for hide the start button
+    def hide_pushbutton2(self, visibility):
+        self.pushButton2.setVisible(not visibility)
 
     # start button function, will be replaced by gesture recognition
     def startButton_clicked(self):
@@ -70,7 +74,7 @@ class Ui_MainWindow(QtCore.QObject):
         font.setPointSize(18)       
         self.textEdit.setFont(font)
         self.textEdit.setObjectName("textEdit")
-        self.textEdit.setText("5s")
+        self.textEdit.setText("15s")
         self.textEdit.setReadOnly(True)
 
         # text box for message
@@ -131,6 +135,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton2.setObjectName("StartButton")
         self.pushButton2.setText("Start")
         self.pushButton2.clicked.connect(self.startButton_clicked)
+        self.hide_pushbutton2_signal.connect(self.hide_pushbutton2)
 
         # label for the image of "C"
         self.labelC = QtWidgets.QLabel(self.centralwidget)
@@ -374,15 +379,12 @@ class Ui_MainWindow(QtCore.QObject):
                     result_face = face_detection.process(frame)
                     if result_face.detections:
                         for detection in result_face.detections:
-                            mpdraw.draw_detection(frame, detection)
                             lefteye = int(detection.location_data.relative_keypoints[1].x * imgwidth), int(detection.location_data.relative_keypoints[1].y * imgheight)
                             righteye = int(detection.location_data.relative_keypoints[0].x * imgwidth), int(detection.location_data.relative_keypoints[0].y * imgheight)
                             eyes_xdistance = lefteye[0] - righteye[0]
-                            print(eyes_xdistance)
 
             if result.multi_hand_landmarks:
                 for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
-                    mpdraw.draw_landmarks(frame, handLms, mphands.HAND_CONNECTIONS, handLmsStyle, handConStyle)
                     # get the handness 
                     handness_label = "Left" if result.multi_handedness[hand_idx].classification[0].label == "Left" else "Right"  
 
@@ -422,8 +424,19 @@ class Ui_MainWindow(QtCore.QObject):
                     horizental_distance_pinky = int(pinky_finger_tip[0] - pinky_finger_base[0])
                     vertical_distance_pinky = int(pinky_finger_tip[1] - pinky_finger_base[1])
 
+
+                    # Distance between thumb and index finger tip
+                    distance_thumb_index = int(((thumb_tip[0] - index_finger_tip[0])**2 + (thumb_tip[1] - index_finger_tip[1])**2)**0.5)
+                    print(distance_thumb_index, vertical_distance_middle, vertical_distance_ring, vertical_distance_pinky)
+
+                    # start when OK gesture
+                    if distance_thumb_index < 40 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False:
+                        self.teststart = True
+                        self.hide_pushbutton2_signal.emit(True)
+                        self.update_message_signal.emit("Get ready, please cover left eye and point with your right hand.") 
+
                     # gesture recognition, round 1 right hand
-                    if index_length > 60 and self.pointstart == True:
+                    if index_length > 70 and self.pointstart == True:
                         if (handness_label == "Right" and self.round == 1) or (handness_label == "Left" and self.round == 2):
                             if vertical_distance_index < -60:
                                 self.update_message_signal.emit("Pointing up")
@@ -437,6 +450,9 @@ class Ui_MainWindow(QtCore.QObject):
                             elif horizental_distance_index > 60:
                                 self.update_message_signal.emit("Pointing right")   
                                 self.pointingdirection = 'right'
+                    elif index_length < 70 and self.pointstart == True:
+                        self.update_message_signal.emit("Can't see the notch, pass.")
+                        self.pointingdirection = 'pass'
 
 
             # get the frame information
