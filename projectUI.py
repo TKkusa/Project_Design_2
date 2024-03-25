@@ -2,6 +2,7 @@ import sys, cv2, threading
 import mediapipe as mp
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtMultimedia import QSound
 from qt_material import apply_stylesheet
 import random
 import eyetest_var as etv
@@ -15,11 +16,12 @@ class Ui_MainWindow(QtCore.QObject):
     update_message_signal = QtCore.pyqtSignal(str)
     update_image_signal = QtCore.pyqtSignal(QImage)
     hide_pushbutton2_signal = QtCore.pyqtSignal(bool)
+    qsound = QSound("")
 
     def __init__(self):
         super().__init__()
         self.round = 1
-        self.counter = 16
+        self.counter = 10
         self.testeye_now = 'right'
         self.ocv = True
         self.teststart = False
@@ -74,7 +76,7 @@ class Ui_MainWindow(QtCore.QObject):
         font.setPointSize(18)       
         self.textEdit.setFont(font)
         self.textEdit.setObjectName("textEdit")
-        self.textEdit.setText("15s")
+        self.textEdit.setText("10s")
         self.textEdit.setReadOnly(True)
 
         # text box for message
@@ -191,10 +193,15 @@ class Ui_MainWindow(QtCore.QObject):
         if self.teststart == True:
             self.counter = self.counter - 1
             self.textEdit.setText(str(self.counter)+"s")
+
+            if self.counter != 0:
+                self.qsound.play('./SoundEffect&Others/countdown.wav')
+
             if self.counter == 0:
                 self.labelC.setVisible(True)
                 self.pointstart = True
                 self.counter = 4
+                self.qsound.play('./SoundEffect&Others/countdownEnd.wav')
 
                 print(etv.visionlevel_correctimes, etv.lowest_wrongtimes, etv.level_now)
 
@@ -212,7 +219,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.imagedirection = ' '
         self.pointingdirection = ''
         self.round = 2
-        self.counter = 16
+        self.counter = 11
         self.labelC.setVisible(False)
         etv.lowest_wrongtimes = -1
         etv.level_now = 0.1
@@ -351,7 +358,7 @@ class Ui_MainWindow(QtCore.QObject):
             print("Error: Could not open camera.")
             exit()
         else:
-            self.update_message_signal.emit("Welcome to VTABIRD! Camera is ready, Please click the start button.")
+            self.update_message_signal.emit("Welcome to VTABIRD! Please click the start button or show OK gesture.")
             
 
         # loop for the gesture recognition
@@ -427,13 +434,13 @@ class Ui_MainWindow(QtCore.QObject):
 
                     # Distance between thumb and index finger tip
                     distance_thumb_index = int(((thumb_tip[0] - index_finger_tip[0])**2 + (thumb_tip[1] - index_finger_tip[1])**2)**0.5)
-                    print(distance_thumb_index, vertical_distance_middle, vertical_distance_ring, vertical_distance_pinky)
 
                     # start when OK gesture
-                    if distance_thumb_index < 40 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False:
+                    if distance_thumb_index < 40 and vertical_distance_middle < -80 and vertical_distance_ring < -80 and vertical_distance_pinky < -80 and self.teststart == False:
                         self.teststart = True
                         self.hide_pushbutton2_signal.emit(True)
-                        self.update_message_signal.emit("Get ready, please cover left eye and point with your right hand.") 
+                        self.update_message_signal.emit("Get ready, please cover left eye and point with your right hand.")
+                         
 
                     # gesture recognition, round 1 right hand
                     if index_length > 70 and self.pointstart == True:

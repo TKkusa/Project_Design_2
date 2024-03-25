@@ -34,6 +34,7 @@ self.update_message_signal.emit("Welcome to VTABIRD! Camera is ready.")
 修改materials.css.template檔案中的
 font-size: {{18|density(density_scale, density_interval=1)}}px;
 修正字體大小問題
+在其他電腦測試效果會不同，打包應用程式注意此文件
 
 
 
@@ -46,3 +47,10 @@ font-size: {{18|density(density_scale, density_interval=1)}}px;
 ☆檢驗報告的window
 UI的空白區塊
 
+
+
+2024/3/25 開發日誌
+---------------------
+加入OK手勢開始測試
+倒計時音效
+發現極低概率測試到一半閃退
