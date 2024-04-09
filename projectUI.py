@@ -5,10 +5,39 @@ from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtMultimedia import QSound
 from qt_material import apply_stylesheet
 import random
-import eyetest_var as etv
+import eyetest_variables as etv
 
 etv.lowest_wrongtimes = -1
 etv.level_now = 0.1
+
+#start window for adapting the picture size based on the screen size
+class Ui_startWindow(QtCore.QObject):   
+    def __init__(self):
+        super().__init__()
+
+    def startclicked(self):
+        startWindow.close()
+
+       
+    def setupUi(self, startWindow):
+        startWindow.setObjectName("startWindow")
+        startWindow.resize(1200, 800)
+        startWindow.setWindowTitle("VTABIRD")
+        startWindow.setWindowIcon(QtGui.QIcon('./icon.png'))
+        self.centralwidget = QtWidgets.QWidget(startWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(1000, 50, 160, 50))
+        font = QtGui.QFont()
+        font.setPointSize(18)
+
+        self.pushButton.setFont(font)
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton.setText("Complete")
+        self.pushButton.clicked.connect(self.startclicked)
+
+        startWindow.setCentralWidget(self.centralwidget)
+        QtCore.QMetaObject.connectSlotsByName(startWindow)
 
 class Ui_MainWindow(QtCore.QObject):
     # signals for updating the message and image
@@ -483,17 +512,23 @@ class Ui_MainWindow(QtCore.QObject):
 if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
+
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    startWindow = QtWidgets.QMainWindow()
+
+    start_ui = Ui_startWindow()
+    start_ui.setupUi(startWindow)
+    main_ui = Ui_MainWindow()
+    main_ui.setupUi(MainWindow)
 
     apply_stylesheet(app, theme='dark_teal.xml') 
 
-    vedio = threading.Thread(target=ui.opencv)
+    vedio = threading.Thread(target=main_ui.opencv)
     vedio.start()
     MainWindow.showMaximized()
+    startWindow.show()
 
     # Connect the close event of the main window to close the camera
-    MainWindow.closeEvent = ui.close_camera
+    MainWindow.closeEvent = main_ui.close_camera
 
     sys.exit(app.exec_())
