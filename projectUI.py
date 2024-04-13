@@ -9,15 +9,36 @@ import eyetest_variables as etv
 
 etv.lowest_wrongtimes = -1
 etv.level_now = 0.1
+language_choice = 'English'
 
 #start window for adapting the picture size based on the screen size
 class Ui_startWindow(QtCore.QObject):   
     def __init__(self):
         super().__init__()
+        self.setting_step = 1
 
+    def selectChinese(self):
+        global language_choice
+        language_choice = 'Chinese'
+        self.pushButton.setText("下一步")
+
+    def selectEnglish(self):
+        global language_choice
+        language_choice = 'English'
+        self.pushButton.setText("Next")
+    
     def startclicked(self):
-        startWindow.close()
-
+        print(language_choice)
+        if self.setting_step == 1:
+            self.pushButton2.setVisible(False)
+            self.pushButton3.setVisible(False)
+            self.setting_step = 2
+            if language_choice == 'English':
+                self.pushButton.setText("Complete")
+            elif language_choice == 'Chinese':
+                self.pushButton.setText("完成")
+        elif self.setting_step == 2:
+            startWindow.close()
        
     def setupUi(self, startWindow):
         startWindow.setObjectName("startWindow")
@@ -31,10 +52,36 @@ class Ui_startWindow(QtCore.QObject):
         font = QtGui.QFont()
         font.setPointSize(18)
 
+        # button for complete setting
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
-        self.pushButton.setText("Complete")
+        self.pushButton.setText("Next")
         self.pushButton.clicked.connect(self.startclicked)
+
+        # text for setting 
+        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit.setGeometry(QtCore.QRect(400, 50, 350, 50))
+        font = QtGui.QFont()
+        font.setPointSize(18)
+        self.textEdit.setFont(font)
+        self.textEdit.setObjectName("textEdit")
+        self.textEdit.setText("Please select your preferred language.")
+
+        # button for change to Chinese
+        self.pushButton2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton2.setGeometry(QtCore.QRect(500, 250, 160, 50))
+        self.pushButton2.setFont(font)
+        self.pushButton2.setObjectName("pushButton2")
+        self.pushButton2.setText("繁體中文")
+        self.pushButton2.clicked.connect(self.selectChinese)
+
+        # button for change to English
+        self.pushButton3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton3.setGeometry(QtCore.QRect(500, 350, 160, 50))
+        self.pushButton3.setFont(font)
+        self.pushButton3.setObjectName("pushButton3")
+        self.pushButton3.setText("English")
+        self.pushButton3.clicked.connect(self.selectEnglish)
 
         startWindow.setCentralWidget(self.centralwidget)
         QtCore.QMetaObject.connectSlotsByName(startWindow)
@@ -72,8 +119,12 @@ class Ui_MainWindow(QtCore.QObject):
     # start button function, will be replaced by gesture recognition
     def startButton_clicked(self):
         self.teststart = True
+        global language_choice
         self.pushButton2.setVisible(False)
-        self.textEdit_3.setText("Get ready, please cover left eye and point with your right hand.")
+        if language_choice == 'English':
+            self.textEdit_3.setText("Get ready, please cover left eye and point with your right hand.")
+        elif language_choice == 'Chinese':
+            self.textEdit_3.setText("準備好了嗎？請遮住左眼，用右手指出缺口方向。")
         
 
     # function for updating the message 
@@ -340,11 +391,15 @@ class Ui_MainWindow(QtCore.QObject):
 
     # check the vision level of two eyes
     def check_vision_level(self):
+        global language_choice
         if self.round == 1:
             if etv.lowest_wrongtimes == 3:
                 # show the result
-                print(f'Your {self.testeye_now} eye is less than 0.1') 
-                self.textEdit_3.setText("Round 2, please cover your right eye and point with your left hand.")
+                print(f'Your {self.testeye_now} eye is less than 0.1')     
+                if language_choice == 'English':
+                    self.textEdit_3.setText("Round 2, please cover your right eye and point with your left hand.")       
+                elif language_choice == 'Chinese':
+                    self.textEdit_3.setText("第二輪，請遮住右眼，用左手指出缺口方向。")
             
                 # initialize
                 self.reset_and_init()
@@ -353,7 +408,10 @@ class Ui_MainWindow(QtCore.QObject):
                 if times >= 3:
                     # show the result
                     print(f"Your {self.testeye_now} vision level is {level}.")
-                    self.textEdit_3.setText("Round 2, please cover your right eye and point with your left hand.")
+                    if language_choice == 'English':
+                        self.textEdit_3.setText("Round 2, please cover your right eye and point with your left hand.")
+                    elif language_choice == 'Chinese':
+                        self.textEdit_3.setText("第二輪，請遮住右眼，用左手指出缺口方向.")
 
                     # initialize
                     self.reset_and_init()
@@ -372,6 +430,7 @@ class Ui_MainWindow(QtCore.QObject):
 
     # function for the camera
     def opencv(self):
+        global language_choice
         self.cap = cv2.VideoCapture(0)
 
         mphands = mp.solutions.hands
@@ -468,26 +527,42 @@ class Ui_MainWindow(QtCore.QObject):
                     if distance_thumb_index < 40 and vertical_distance_middle < -80 and vertical_distance_ring < -80 and vertical_distance_pinky < -80 and self.teststart == False:
                         self.teststart = True
                         self.hide_pushbutton2_signal.emit(True)
-                        self.update_message_signal.emit("Get ready, please cover left eye and point with your right hand.")
+                        if language_choice == 'English':
+                            self.update_message_signal.emit("Get ready, please cover left eye and point with your right hand.")
+                        elif language_choice == 'Chinese':
+                            self.update_message_signal.emit("準備好了嗎？請遮住左眼，用右手指出缺口方向。")
                          
 
                     # gesture recognition, round 1 right hand
                     if index_length > 70 and self.pointstart == True:
                         if (handness_label == "Right" and self.round == 1) or (handness_label == "Left" and self.round == 2):
                             if vertical_distance_index < -60:
-                                self.update_message_signal.emit("Pointing up")
+                                if language_choice == 'English':
+                                    self.update_message_signal.emit("Pointing up")
+                                elif language_choice == 'Chinese':
+                                    self.update_message_signal.emit("指向上方")
                                 self.pointingdirection = 'up'
                             elif vertical_distance_index > 60:
-                                self.update_message_signal.emit("Pointing down")
+                                if language_choice == 'English':
+                                    self.update_message_signal.emit("Pointing down")
+                                elif language_choice == 'Chinese':
+                                    self.update_message_signal.emit("指向下方")
                                 self.pointingdirection = 'down'
                             elif horizental_distance_index < -60:
-                                self.update_message_signal.emit("Pointing left")
-                                self.pointingdirection = 'left'
+                                if language_choice == 'English':
+                                    self.update_message_signal.emit("Pointing left")
+                                elif language_choice == 'Chinese':
+                                    self.update_message_signal.emit("指向左方")
                             elif horizental_distance_index > 60:
-                                self.update_message_signal.emit("Pointing right")   
-                                self.pointingdirection = 'right'
+                                if language_choice == 'English':
+                                    self.update_message_signal.emit("Pointing right")
+                                elif language_choice == 'Chinese':
+                                    self.update_message_signal.emit("指向右方")
                     elif index_length < 70 and self.pointstart == True:
-                        self.update_message_signal.emit("Can't see the notch, pass.")
+                        if language_choice == 'English':
+                            self.update_message_signal.emit("Can't see the notch, pass.")
+                        elif language_choice == 'Chinese':
+                            self.update_message_signal.emit("看不清楚缺口，跳過。")
                         self.pointingdirection = 'pass'
 
 
