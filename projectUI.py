@@ -11,87 +11,16 @@ etv.lowest_wrongtimes = -1
 etv.level_now = 0.1
 language_choice = 'English'
 
-#start window for adapting the picture size based on the screen size
-class Ui_startWindow(QtCore.QObject):   
-    def __init__(self):
-        super().__init__()
-        self.setting_step = 1
-
-    def selectChinese(self):
-        global language_choice
-        language_choice = 'Chinese'
-        self.pushButton.setText("下一步")
-
-    def selectEnglish(self):
-        global language_choice
-        language_choice = 'English'
-        self.pushButton.setText("Next")
-    
-    def startclicked(self):
-        print(language_choice)
-        if self.setting_step == 1:
-            self.pushButton2.setVisible(False)
-            self.pushButton3.setVisible(False)
-            self.setting_step = 2
-            if language_choice == 'English':
-                self.pushButton.setText("Complete")
-            elif language_choice == 'Chinese':
-                self.pushButton.setText("完成")
-        elif self.setting_step == 2:
-            startWindow.close()
-       
-    def setupUi(self, startWindow):
-        startWindow.setObjectName("startWindow")
-        startWindow.resize(1200, 800)
-        startWindow.setWindowTitle("VTABIRD")
-        startWindow.setWindowIcon(QtGui.QIcon('./icon.png'))
-        self.centralwidget = QtWidgets.QWidget(startWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(1000, 50, 160, 50))
-        font = QtGui.QFont()
-        font.setPointSize(18)
-
-        # button for complete setting
-        self.pushButton.setFont(font)
-        self.pushButton.setObjectName("pushButton")
-        self.pushButton.setText("Next")
-        self.pushButton.clicked.connect(self.startclicked)
-
-        # text for setting 
-        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(400, 50, 350, 50))
-        font = QtGui.QFont()
-        font.setPointSize(18)
-        self.textEdit.setFont(font)
-        self.textEdit.setObjectName("textEdit")
-        self.textEdit.setText("Please select your preferred language.")
-
-        # button for change to Chinese
-        self.pushButton2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton2.setGeometry(QtCore.QRect(500, 250, 160, 50))
-        self.pushButton2.setFont(font)
-        self.pushButton2.setObjectName("pushButton2")
-        self.pushButton2.setText("繁體中文")
-        self.pushButton2.clicked.connect(self.selectChinese)
-
-        # button for change to English
-        self.pushButton3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton3.setGeometry(QtCore.QRect(500, 350, 160, 50))
-        self.pushButton3.setFont(font)
-        self.pushButton3.setObjectName("pushButton3")
-        self.pushButton3.setText("English")
-        self.pushButton3.clicked.connect(self.selectEnglish)
-
-        startWindow.setCentralWidget(self.centralwidget)
-        QtCore.QMetaObject.connectSlotsByName(startWindow)
-
 class Ui_MainWindow(QtCore.QObject):
     # signals for updating the message and image
     # avoid updating the GUI from a different thread
     update_message_signal = QtCore.pyqtSignal(str)
     update_image_signal = QtCore.pyqtSignal(QImage)
     hide_pushbutton2_signal = QtCore.pyqtSignal(bool)
+    choose_pushbutton3_signal = QtCore.pyqtSignal(bool)
+    choose_pushbutton4_signal = QtCore.pyqtSignal(bool)
+    quit_signal = QtCore.pyqtSignal(bool)  
+    
     qsound = QSound("")
 
     def __init__(self):
@@ -115,9 +44,28 @@ class Ui_MainWindow(QtCore.QObject):
     # function for hide the start button
     def hide_pushbutton2(self, visibility):
         self.pushButton2.setVisible(not visibility)
+        self.pushButton3.setVisible(not visibility)
+        self.pushButton4.setVisible(not visibility)
+        self.label_2.setVisible(True)
+    
+    #function for set the pushbutton3 black
+    def choose_pushbutton3(self, visibility):
+        global language_choice
+        self.pushButton3.setStyleSheet("background-color: black;")
+        self.pushButton4.setStyleSheet("background-color: transparent;")
+        language_choice = 'Chinese'
+        self.textEdit_3.setText("歡迎使用VTABIRD！請選擇您的偏好語言後展示OK手勢。")
+
+    def choose_pushbutton4(self, visibility):
+        global language_choice
+        self.pushButton4.setStyleSheet("background-color: black;")
+        self.pushButton3.setStyleSheet("background-color: transparent;")
+        language_choice = 'English'
+        self.textEdit_3.setText("Welcome to VTABIRD! Please choose your preferred language and then show OK gesture.")
 
     # start button function, will be replaced by gesture recognition
     def startButton_clicked(self):
+        self.label_2.setVisible(True)
         self.teststart = True
         global language_choice
         self.pushButton2.setVisible(False)
@@ -171,15 +119,28 @@ class Ui_MainWindow(QtCore.QObject):
 
         # button for quit the application
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(1570, 780, 100, 50))
+        self.pushButton.setGeometry(QtCore.QRect(1270, 800, 400, 50))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(18)
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("quitButton")
-        self.pushButton.setText("Quit")
+        self.pushButton.setText("Gesture YA to quit the application")
         self.pushButton.clicked.connect(self.quitButton_clicked)
+        self.quit_signal.connect(self.quitButton_clicked)
+        self.pushButton.setVisible(False)
 
+        #text box for how to quit the application
+        self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_2.setGeometry(QtCore.QRect(1270, 800, 400, 50))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(18)
+        self.textEdit_2.setObjectName("textEdit_2")
+        self.textEdit_2.setText("Gesture YA to quit the application")
+        self.textEdit_2.setVisible(True)
+        self.textEdit_2.setReadOnly(True)
+    
         self.textEdit.raise_()
         self.textEdit_3.raise_()        
         MainWindow.setCentralWidget(self.centralwidget)
@@ -198,9 +159,9 @@ class Ui_MainWindow(QtCore.QObject):
         # label for whiteboard
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(50, 50, 830, 730))
-        self.label_2.setStyleSheet("background-color: white;")
         self.label_2.setObjectName("label_2")
         self.label_2.setStyleSheet("background-color: black;")
+        self.label_2.setVisible(False)
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -218,6 +179,31 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton2.setText("Start")
         self.pushButton2.clicked.connect(self.startButton_clicked)
         self.hide_pushbutton2_signal.connect(self.hide_pushbutton2)
+
+        #button for change to Chinese
+        self.pushButton3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton3.setGeometry(QtCore.QRect(400, 250, 150, 50))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(18)
+        self.pushButton3.setFont(font)
+        self.pushButton3.setObjectName("ChineseButton")
+        self.pushButton3.setText("中文")
+        self.choose_pushbutton3_signal.connect(self.choose_pushbutton3)
+        
+
+        #button for change to English
+        self.pushButton4 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton4.setGeometry(QtCore.QRect(400, 350, 150, 50))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(18)
+        self.pushButton4.setFont(font)
+        self.pushButton4.setObjectName("EnglishButton")
+        self.pushButton4.setText("English")
+        self.choose_pushbutton4_signal.connect(self.choose_pushbutton4)
+        self.pushButton4.setStyleSheet("background-color: black;")
+
 
         # label for the image of "C"
         self.labelC = QtWidgets.QLabel(self.centralwidget)
@@ -446,7 +432,7 @@ class Ui_MainWindow(QtCore.QObject):
             print("Error: Could not open camera.")
             exit()
         else:
-            self.update_message_signal.emit("Welcome to VTABIRD! Please click the start button or show OK gesture.")
+            self.update_message_signal.emit("Welcome to VTABIRD! Please choose your preferred language and show OK gesture.")
             
 
         # loop for the gesture recognition
@@ -482,6 +468,8 @@ class Ui_MainWindow(QtCore.QObject):
                 for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
                     # get the handness 
                     handness_label = "Left" if result.multi_handedness[hand_idx].classification[0].label == "Left" else "Right"  
+                    #show landmarks
+                    mpdraw.draw_landmarks(frame, handLms, mphands.HAND_CONNECTIONS, handLmsStyle, handConStyle)
 
                     # the information of every fingers
                     # thumb
@@ -523,15 +511,26 @@ class Ui_MainWindow(QtCore.QObject):
                     # Distance between thumb and index finger tip
                     distance_thumb_index = int(((thumb_tip[0] - index_finger_tip[0])**2 + (thumb_tip[1] - index_finger_tip[1])**2)**0.5)
 
+                    # gesture for choosing the language
+                    if index_length > 70 and self.teststart == False:
+                        if vertical_distance_index < -60:
+                            self.choose_pushbutton3_signal.emit(True)
+                        elif vertical_distance_index > 60:
+                            self.choose_pushbutton4_signal.emit(True)
+
+                    print(vertical_distance_index ,vertical_distance_middle, vertical_distance_ring, vertical_distance_pinky)
+                    # gesture YA for quit the application
+                    if vertical_distance_index < -120 and vertical_distance_middle < -120 and vertical_distance_ring > -80 and vertical_distance_pinky > -80:
+                        self.quit_signal.emit(True)
+
                     # start when OK gesture
-                    if distance_thumb_index < 40 and vertical_distance_middle < -80 and vertical_distance_ring < -80 and vertical_distance_pinky < -80 and self.teststart == False:
+                    if distance_thumb_index < 30 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False:
                         self.teststart = True
                         self.hide_pushbutton2_signal.emit(True)
                         if language_choice == 'English':
                             self.update_message_signal.emit("Get ready, please cover left eye and point with your right hand.")
                         elif language_choice == 'Chinese':
-                            self.update_message_signal.emit("準備好了嗎？請遮住左眼，用右手指出缺口方向。")
-                         
+                            self.update_message_signal.emit("準備好了嗎？請遮住左眼，用右手指出缺口方向。")                 
 
                     # gesture recognition, round 1 right hand
                     if index_length > 70 and self.pointstart == True:
@@ -553,11 +552,13 @@ class Ui_MainWindow(QtCore.QObject):
                                     self.update_message_signal.emit("Pointing left")
                                 elif language_choice == 'Chinese':
                                     self.update_message_signal.emit("指向左方")
+                                self.pointingdirection = 'left'
                             elif horizental_distance_index > 60:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing right")
                                 elif language_choice == 'Chinese':
                                     self.update_message_signal.emit("指向右方")
+                                self.pointingdirection = 'right'
                     elif index_length < 70 and self.pointstart == True:
                         if language_choice == 'English':
                             self.update_message_signal.emit("Can't see the notch, pass.")
@@ -589,19 +590,15 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
     MainWindow = QtWidgets.QMainWindow()
-    startWindow = QtWidgets.QMainWindow()
 
-    start_ui = Ui_startWindow()
-    start_ui.setupUi(startWindow)
     main_ui = Ui_MainWindow()
     main_ui.setupUi(MainWindow)
 
-    apply_stylesheet(app, theme='dark_teal.xml') 
+    apply_stylesheet(app, theme='dark_cyan.xml') 
 
     vedio = threading.Thread(target=main_ui.opencv)
     vedio.start()
     MainWindow.showMaximized()
-    startWindow.show()
 
     # Connect the close event of the main window to close the camera
     MainWindow.closeEvent = main_ui.close_camera
