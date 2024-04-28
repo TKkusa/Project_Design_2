@@ -35,6 +35,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.imagedirection = ' '
         self.pointingdirection = ''
         self.cap = None              
+        self.righteye = ''
+        self.lefteye = ''
 
     # button for quit the application
     def quitButton_clicked(self):
@@ -47,20 +49,40 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton3.setVisible(not visibility)
         self.pushButton4.setVisible(not visibility)
         self.label_2.setVisible(True)
+        self.qsound.play('./SoundEffect&Others/Start.wav')
+
+    # hide every widget
+    def hide_all(self):
+        self.pushButton2.setVisible(False)
+        self.pushButton3.setVisible(False)
+        self.pushButton4.setVisible(False)
+        self.label_2.setVisible(False)
+        self.labelC.setVisible(False)
+        self.textEdit.setVisible(False)
+        self.textEdit_3.setVisible(False)
+        self.pushButton.setVisible(False)
+
+        self.textEdit_4.setVisible(True)
     
     #function for set the pushbutton3 black
     def choose_pushbutton3(self, visibility):
-        global language_choice
+        global language_choice       
+        if language_choice == 'English':
+            self.qsound.play('./SoundEffect&Others/select.wav')
         self.pushButton3.setStyleSheet("background-color: black;")
         self.pushButton4.setStyleSheet("background-color: transparent;")
         language_choice = 'Chinese'
+        self.textEdit_2.setText("手勢YA退出應用程式")
         self.textEdit_3.setText("歡迎使用VTABIRD！請選擇您的偏好語言後展示OK手勢。")
 
     def choose_pushbutton4(self, visibility):
         global language_choice
+        if language_choice == 'Chinese':
+            self.qsound.play('./SoundEffect&Others/select.wav')
         self.pushButton4.setStyleSheet("background-color: black;")
         self.pushButton3.setStyleSheet("background-color: transparent;")
         language_choice = 'English'
+        self.textEdit_2.setText("Gesture YA to quit the application")
         self.textEdit_3.setText("Welcome to VTABIRD! Please choose your preferred language and then show OK gesture.")
 
     # start button function, will be replaced by gesture recognition
@@ -140,6 +162,19 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_2.setText("Gesture YA to quit the application")
         self.textEdit_2.setVisible(True)
         self.textEdit_2.setReadOnly(True)
+
+        # text box for the final result
+        self.textEdit_4 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_4.setGeometry(QtCore.QRect(50, 50, 500, 500))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(18)
+        self.textEdit_4.setFont(font)
+        self.textEdit_4.setObjectName("textEdit_4")
+        self.textEdit_4.setText("")
+        self.textEdit_4.setVisible(False)
+        self.textEdit_4.setReadOnly(True)
+
     
         self.textEdit.raise_()
         self.textEdit_3.raise_()        
@@ -381,7 +416,10 @@ class Ui_MainWindow(QtCore.QObject):
         if self.round == 1:
             if etv.lowest_wrongtimes == 3:
                 # show the result
-                print(f'Your {self.testeye_now} eye is less than 0.1')     
+                if language_choice == 'English':
+                    self.righteye = f'Your right eye vision level is less than 0.1'
+                elif language_choice == 'Chinese':
+                    self.righteye = f'您的右眼視力等級小於0.1'    
                 if language_choice == 'English':
                     self.textEdit_3.setText("Round 2, please cover your right eye and point with your left hand.")       
                 elif language_choice == 'Chinese':
@@ -393,7 +431,10 @@ class Ui_MainWindow(QtCore.QObject):
             for level, times in etv.visionlevel_correctimes.items():
                 if times >= 3:
                     # show the result
-                    print(f"Your {self.testeye_now} vision level is {level}.")
+                    if language_choice == 'English':
+                        self.righteye = f"Your right eye vision level is approximately {level}."
+                    elif language_choice == 'Chinese':
+                        self.righteye = f"您的右眼視力等級約為{level}。"
                     if language_choice == 'English':
                         self.textEdit_3.setText("Round 2, please cover your right eye and point with your left hand.")
                     elif language_choice == 'Chinese':
@@ -404,14 +445,22 @@ class Ui_MainWindow(QtCore.QObject):
                     self.testeye_now = 'left'
         elif self.round == 2:    
             if etv.lowest_wrongtimes == 3:
-                print(f'Your {self.testeye_now} eye is less than 0.1')
-                self.ocv = False
-                sys.exit()
+                if language_choice == 'English':
+                    self.lefteye = f'Your left eye vision level is less than 0.1'
+                elif language_choice == 'Chinese':
+                    self.lefteye = f'您的左眼視力等級小於0.1'
+                self.textEdit_4.setText(f"{self.righteye}\n\n{self.lefteye}")
+                self.hide_all()
+                self.mytimer.stop()
             for level, times in etv.visionlevel_correctimes.items():
                 if times >= 3:
-                    print(f"Your {self.testeye_now} vision level is {level}.")
-                    self.ocv = False
-                    sys.exit()
+                    if language_choice == 'English':
+                        self.lefteye = f"Your left eye vision level is approximately {level}."
+                    elif language_choice == 'Chinese':
+                        self.lefteye = f"您的左眼視力等級約為{level}。"
+                    self.textEdit_4.setText(f"{self.righteye}\n\n{self.lefteye}")
+                    self.hide_all()
+                    self.mytimer.stop()
 
 
     # function for the camera
@@ -510,6 +559,7 @@ class Ui_MainWindow(QtCore.QObject):
 
                     # Distance between thumb and index finger tip
                     distance_thumb_index = int(((thumb_tip[0] - index_finger_tip[0])**2 + (thumb_tip[1] - index_finger_tip[1])**2)**0.5)
+                    print(vertical_distance_index, vertical_distance_middle, vertical_distance_ring, vertical_distance_pinky)
 
                     # gesture for choosing the language
                     if index_length > 70 and self.teststart == False:
@@ -518,9 +568,8 @@ class Ui_MainWindow(QtCore.QObject):
                         elif vertical_distance_index > 60:
                             self.choose_pushbutton4_signal.emit(True)
 
-                    print(vertical_distance_index ,vertical_distance_middle, vertical_distance_ring, vertical_distance_pinky)
                     # gesture YA for quit the application
-                    if vertical_distance_index < -120 and vertical_distance_middle < -120 and vertical_distance_ring > -80 and vertical_distance_pinky > -80:
+                    if vertical_distance_index < -120 and vertical_distance_middle < -120 and vertical_distance_ring > -50 and vertical_distance_pinky > -50:
                         self.quit_signal.emit(True)
 
                     # start when OK gesture
@@ -530,7 +579,7 @@ class Ui_MainWindow(QtCore.QObject):
                         if language_choice == 'English':
                             self.update_message_signal.emit("Get ready, please cover left eye and point with your right hand.")
                         elif language_choice == 'Chinese':
-                            self.update_message_signal.emit("準備好了嗎？請遮住左眼，用右手指出缺口方向。")                 
+                            self.update_message_signal.emit("準備好了嗎？請遮住左眼，用右手指出缺口方向。")                                    
 
                     # gesture recognition, round 1 right hand
                     if index_length > 70 and self.pointstart == True:
