@@ -15,6 +15,7 @@ class Ui_MainWindow(QtCore.QObject):
     # signals for updating the message and image
     # avoid updating the GUI from a different thread
     update_message_signal = QtCore.pyqtSignal(str)
+    update_distamce_info_signal = QtCore.pyqtSignal(bool)
     update_image_signal = QtCore.pyqtSignal(QImage)
     hide_pushbutton2_signal = QtCore.pyqtSignal(bool)
     choose_pushbutton3_signal = QtCore.pyqtSignal(bool)
@@ -32,6 +33,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.teststart = False
         self.pointstart = False
         self.setsize = 100           
+        self.eye_xdistance = 0
         self.imagedirection = ' '
         self.pointingdirection = ''
         self.cap = None              
@@ -91,11 +93,30 @@ class Ui_MainWindow(QtCore.QObject):
         self.teststart = True
         global language_choice
         self.pushButton2.setVisible(False)
+        self.textEdit_5.setVisible(False)
         if language_choice == 'English':
             self.textEdit_3.setText("Get ready, please cover left eye and point with your right hand.")
         elif language_choice == 'Chinese':
             self.textEdit_3.setText("準備好了嗎？請遮住左眼，用右手指出缺口方向。")
         
+    #function for screen to user distance information
+    def eye_distance(self):
+        global language_choice
+        if self.eye_xdistance < 115:
+            if language_choice == 'English':
+                self.textEdit_5.setText("Please move closer to the camera.")
+            else:
+                self.textEdit_5.setText("請靠近攝影機。")           
+        elif self.eye_xdistance > 130:
+            if language_choice == 'English':
+                self.textEdit_5.setText("Please move away from the camera.")
+            else:
+                self.textEdit_5.setText("請遠離攝影機。")
+        else:
+            if language_choice == 'English':
+                self.textEdit_5.setText("The distance is appropriate.")
+            else:
+                self.textEdit_5.setText("距離適當。")
 
     # function for updating the message 
     def update_message(self, message):
@@ -128,6 +149,18 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit.setObjectName("textEdit")
         self.textEdit.setText("10s")
         self.textEdit.setReadOnly(True)
+
+        # text box for eye distance
+        self.textEdit_5 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_5.setGeometry(QtCore.QRect(50, 730, 500, 50))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(18)
+        self.textEdit_5.setFont(font)
+        self.textEdit_5.setObjectName("textEdit_5")
+        self.textEdit_5.setText("")
+        self.textEdit_5.setReadOnly(True)
+        self.update_distamce_info_signal.connect(self.eye_distance)
 
         # text box for message
         self.textEdit_3 = QtWidgets.QTextEdit(self.centralwidget)
@@ -175,7 +208,6 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_4.setVisible(False)
         self.textEdit_4.setReadOnly(True)
 
-    
         self.textEdit.raise_()
         self.textEdit_3.raise_()        
         MainWindow.setCentralWidget(self.centralwidget)
@@ -511,7 +543,11 @@ class Ui_MainWindow(QtCore.QObject):
                         for detection in result_face.detections:
                             lefteye = int(detection.location_data.relative_keypoints[1].x * imgwidth), int(detection.location_data.relative_keypoints[1].y * imgheight)
                             righteye = int(detection.location_data.relative_keypoints[0].x * imgwidth), int(detection.location_data.relative_keypoints[0].y * imgheight)
-                            eyes_xdistance = lefteye[0] - righteye[0]
+                            self.eye_xdistance = lefteye[0] - righteye[0]
+                            self.update_distamce_info_signal.emit(True)
+                            
+                            
+                            
 
             if result.multi_hand_landmarks:
                 for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
@@ -573,7 +609,7 @@ class Ui_MainWindow(QtCore.QObject):
                         self.quit_signal.emit(True)
 
                     # start when OK gesture
-                    if distance_thumb_index < 30 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False:
+                    if distance_thumb_index < 30 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False and self.eye_xdistance >= 115 and self.eye_xdistance <= 130:
                         self.teststart = True
                         self.hide_pushbutton2_signal.emit(True)
                         if language_choice == 'English':
