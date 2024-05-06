@@ -27,19 +27,19 @@ class Ui_MainWindow(QtCore.QObject):
 
     def __init__(self):
         super().__init__()
-        self.round = 1
-        self.counter = 10
-        self.testeye_now = 'right'
-        self.ocv = True
-        self.teststart = False
-        self.pointstart = False
-        self.setsize = 100           
-        self.eye_xdistance = 0
-        self.imagedirection = ' '
-        self.pointingdirection = ''
+        self.round = 1              # round 1 for right eye, round 2 for left eye
+        self.counter = 10           # time limit for every event
+        self.testeye_now = 'right'  # right eye or left eye
+        self.ocv = True             # open the camera or not
+        self.teststart = False      # start the test or not
+        self.pointstart = False     # start the pointing or not
+        self.setsize = 100          # original size of the C image
+        self.eye_xdistance = 0      # distance between two eyes
+        self.imagedirection = ' '   # direction of the C image
+        self.pointingdirection = '' # direction of the pointing
         self.cap = None              
-        self.righteye = ''
-        self.lefteye = ''
+        self.righteye = ''          # result of the right eye
+        self.lefteye = ''           # result of the left eye
 
     # button for quit the application
     def quitButton_clicked(self):
