@@ -6,6 +6,7 @@ from PyQt5.QtMultimedia import QSound
 from qt_material import apply_stylesheet
 import random
 import eyetest_variables as etv
+import time
 
 etv.lowest_wrongtimes = -1
 etv.level_now = 0.1
@@ -63,7 +64,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit.setVisible(False)
         self.textEdit_3.setVisible(False)
         self.pushButton.setVisible(False)
-
+        self.textEdit_5.setVisible(False)
         self.textEdit_4.setVisible(True)
     
     #function for set the pushbutton3 black
@@ -122,7 +123,6 @@ class Ui_MainWindow(QtCore.QObject):
     def update_message(self, message):
         self.textEdit_3.setText(message)   
     
-
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1100, 845)
@@ -235,7 +235,7 @@ class Ui_MainWindow(QtCore.QObject):
         # connect the signals to the functions
         self.update_message_signal.connect(self.update_message)
 
-        # button for starting(click and show the image at random place)
+        # button for starting
         self.pushButton2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton2.setGeometry(QtCore.QRect(1570, 720, 100, 50))
         font = QtGui.QFont()    
@@ -244,7 +244,6 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton2.setFont(font)
         self.pushButton2.setObjectName("StartButton")
         self.pushButton2.setText("Start")
-        self.pushButton2.clicked.connect(self.startButton_clicked)
         self.hide_pushbutton2_signal.connect(self.hide_pushbutton2)
 
         #button for change to Chinese
@@ -258,7 +257,6 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton3.setText("中文")
         self.choose_pushbutton3_signal.connect(self.choose_pushbutton3)
         
-
         #button for change to English
         self.pushButton4 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton4.setGeometry(QtCore.QRect(400, 350, 150, 50))
@@ -271,7 +269,6 @@ class Ui_MainWindow(QtCore.QObject):
         self.choose_pushbutton4_signal.connect(self.choose_pushbutton4)
         self.pushButton4.setStyleSheet("background-color: black;")
 
-
         # label for the image of "C"
         self.labelC = QtWidgets.QLabel(self.centralwidget)
         self.labelC.setGeometry(QtCore.QRect(70, 70, 720, 480))
@@ -281,7 +278,6 @@ class Ui_MainWindow(QtCore.QObject):
         self.mytimer.timeout.connect(self.onTimer)
         self.mytimer.start(1000)
     
-
     # function for the image
     def imageprocess(self):
         img = cv2.imread("./C.jpg")
@@ -320,7 +316,6 @@ class Ui_MainWindow(QtCore.QObject):
 
         self.labelC.setPixmap(canvas)
  
-
     # eyetest flow event
     def onTimer(self):
         if self.teststart == True:
@@ -342,7 +337,6 @@ class Ui_MainWindow(QtCore.QObject):
                 self.check_vision_level()
                 self.imageprocess()
 
-
     # reset every value vision_correctimes dictionary to 0
     def reset_and_init(self):
         for level, times in etv.visionlevel_correctimes.items():
@@ -356,7 +350,6 @@ class Ui_MainWindow(QtCore.QObject):
         self.labelC.setVisible(False)
         etv.lowest_wrongtimes = -1
         etv.level_now = 0.1
-
 
     # vision test event handler
     def vision_test(self):
@@ -441,7 +434,6 @@ class Ui_MainWindow(QtCore.QObject):
                 etv.level_now = 0.9
                 self.setsize = 11
 
-
     # check the vision level of two eyes
     def check_vision_level(self):
         global language_choice
@@ -494,7 +486,6 @@ class Ui_MainWindow(QtCore.QObject):
                     self.hide_all()
                     self.mytimer.stop()
 
-
     # function for the camera
     def opencv(self):
         global language_choice
@@ -546,9 +537,6 @@ class Ui_MainWindow(QtCore.QObject):
                             self.eye_xdistance = lefteye[0] - righteye[0]
                             self.update_distamce_info_signal.emit(True)
                             
-                            
-                            
-
             if result.multi_hand_landmarks:
                 for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
                     # get the handness 
@@ -595,7 +583,6 @@ class Ui_MainWindow(QtCore.QObject):
 
                     # Distance between thumb and index finger tip
                     distance_thumb_index = int(((thumb_tip[0] - index_finger_tip[0])**2 + (thumb_tip[1] - index_finger_tip[1])**2)**0.5)
-                    print(vertical_distance_index, vertical_distance_middle, vertical_distance_ring, vertical_distance_pinky)
 
                     # gesture for choosing the language
                     if index_length > 70 and self.teststart == False:
@@ -620,13 +607,13 @@ class Ui_MainWindow(QtCore.QObject):
                     # gesture recognition, round 1 right hand
                     if index_length > 70 and self.pointstart == True:
                         if (handness_label == "Right" and self.round == 1) or (handness_label == "Left" and self.round == 2):
-                            if vertical_distance_index < -60:
+                            if vertical_distance_index < -80:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing up")
                                 elif language_choice == 'Chinese':
                                     self.update_message_signal.emit("指向上方")
                                 self.pointingdirection = 'up'
-                            elif vertical_distance_index > 60:
+                            elif vertical_distance_index > 80:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing down")
                                 elif language_choice == 'Chinese':
@@ -662,7 +649,6 @@ class Ui_MainWindow(QtCore.QObject):
         
         self.cap.release()
         cv2.destroyAllWindows()
-
 
     # Add method to close the camera
     def close_camera(self):
