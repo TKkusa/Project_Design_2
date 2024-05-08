@@ -72,8 +72,8 @@ class Ui_MainWindow(QtCore.QObject):
         global language_choice       
         if language_choice == 'English':
             self.qsound.play('./SoundEffect&Others/select.wav')
-        self.pushButton3.setStyleSheet("background-color: black;")
-        self.pushButton4.setStyleSheet("background-color: transparent;")
+        self.pushButton3.setStyleSheet("font-size: 16pt; background-color: black;")
+        self.pushButton4.setStyleSheet("font-size: 16pt; background-color: transparent;")
         language_choice = 'Chinese'
         self.textEdit_2.setText("手勢YA退出應用程式")
         self.textEdit_3.setText("歡迎使用VTABIRD！請選擇您的偏好語言後展示OK手勢。")
@@ -82,8 +82,8 @@ class Ui_MainWindow(QtCore.QObject):
         global language_choice
         if language_choice == 'Chinese':
             self.qsound.play('./SoundEffect&Others/select.wav')
-        self.pushButton4.setStyleSheet("background-color: black;")
-        self.pushButton3.setStyleSheet("background-color: transparent;")
+        self.pushButton3.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.pushButton4.setStyleSheet("font-size: 16pt; background-color: black;")
         language_choice = 'English'
         self.textEdit_2.setText("Gesture YA to quit the application")
         self.textEdit_3.setText("Welcome to VTABIRD! Please choose your preferred language and then show OK gesture.")
@@ -246,7 +246,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton3.setFont(font)
         self.pushButton3.setObjectName("ChineseButton")
         self.pushButton3.setText("中文")
-        #self.pushButton3.setStyleSheet("font-size: 16pt;")
+        self.pushButton3.setStyleSheet("font-size: 16pt; background-color: transparent;")
         self.choose_pushbutton3_signal.connect(self.choose_pushbutton3)
         
         #button for change to English
@@ -256,8 +256,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton4.setFont(font)
         self.pushButton4.setObjectName("EnglishButton")
         self.pushButton4.setText("English")
-        #self.pushButton4.setStyleSheet("background-color: black;")
-        #self.pushButton4.setStyleSheet("font-size: 16pt, background-color: black;")
+        self.pushButton4.setStyleSheet("font-size: 16pt; background-color: black;")
         self.choose_pushbutton4_signal.connect(self.choose_pushbutton4)
         
 
