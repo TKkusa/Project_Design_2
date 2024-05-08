@@ -32,3 +32,5 @@ Something can do vision test at home
 
 ## Others
 Webcam first, try to move project to Android or IOS
+
+使用指令安裝套件:pip install -r requirements.txt
