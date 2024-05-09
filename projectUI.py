@@ -26,7 +26,7 @@ class Ui_MainWindow(QtCore.QObject):
     qsound = QSound("")
 
     def __init__(self):
-        super().__init__()
+        super().__init__()      
         self.round = 1              # round 1 for right eye, round 2 for left eye
         self.counter = 10           # time limit for every event
         self.testeye_now = 'right'  # right eye or left eye
@@ -51,6 +51,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton2.setVisible(not visibility)
         self.pushButton3.setVisible(not visibility)
         self.pushButton4.setVisible(not visibility)
+        self.textEdit_6.setVisible(not visibility)
         self.label_2.setVisible(True)
         self.qsound.play('./SoundEffect&Others/Start.wav')
 
@@ -72,10 +73,11 @@ class Ui_MainWindow(QtCore.QObject):
         global language_choice       
         if language_choice == 'English':
             self.qsound.play('./SoundEffect&Others/select.wav')
-        self.pushButton3.setStyleSheet("font-size: 16pt; background-color: black;")
+        self.pushButton3.setStyleSheet("font-size: 16pt; background-color: white;")
         self.pushButton4.setStyleSheet("font-size: 16pt; background-color: transparent;")
         language_choice = 'Chinese'
         self.textEdit_2.setText("手勢YA退出應用程式")
+        self.textEdit_6.setText("手勢OK開始測試")
         self.textEdit_3.setText("歡迎使用VTABIRD！請選擇您的偏好語言後展示OK手勢。")
 
     def choose_pushbutton4(self, visibility):
@@ -83,22 +85,11 @@ class Ui_MainWindow(QtCore.QObject):
         if language_choice == 'Chinese':
             self.qsound.play('./SoundEffect&Others/select.wav')
         self.pushButton3.setStyleSheet("font-size: 16pt; background-color: transparent;")
-        self.pushButton4.setStyleSheet("font-size: 16pt; background-color: black;")
+        self.pushButton4.setStyleSheet("font-size: 16pt; background-color: white;")
         language_choice = 'English'
         self.textEdit_2.setText("Gesture YA to quit the application")
+        self.textEdit_6.setText("Gesture OK to start the test")
         self.textEdit_3.setText("Welcome to VTABIRD! Please choose your preferred language and then show OK gesture.")
-
-    # start button function, will be replaced by gesture recognition
-    def startButton_clicked(self):
-        self.label_2.setVisible(True)
-        self.teststart = True
-        global language_choice
-        self.pushButton2.setVisible(False)
-        self.textEdit_5.setVisible(False)
-        if language_choice == 'English':
-            self.textEdit_3.setText("Get ready, please cover left eye and point with your right hand.")
-        elif language_choice == 'Chinese':
-            self.textEdit_3.setText("準備好了嗎？請遮住左眼，用右手指出缺口方向。")
         
     #function for screen to user distance information
     def eye_distance(self):
@@ -125,19 +116,22 @@ class Ui_MainWindow(QtCore.QObject):
     
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1100, 845)
+        MainWindow.resize(1920, 1080)
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
 
-        # change the title of the window
-        MainWindow.setWindowTitle("VTABIRD")
+        # label for background image
+        self.label_background = QtWidgets.QLabel(self.centralwidget)
+        self.label_background.setGeometry(QtCore.QRect(0, -450, 1920, 1920))
+        self.label_background.setObjectName("label_3")
+        self.label_background.setStyleSheet("image: url(./background.png);")
 
         # change the icon of the window
         MainWindow.setWindowIcon(QtGui.QIcon('./icon.png'))
 
         # only close button available
-        MainWindow.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
+        MainWindow.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.FramelessWindowHint)
 
         # text box for time limit
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
@@ -151,7 +145,7 @@ class Ui_MainWindow(QtCore.QObject):
 
         # text box for eye distance
         self.textEdit_5 = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit_5.setGeometry(QtCore.QRect(50, 730, 500, 50))
+        self.textEdit_5.setGeometry(QtCore.QRect(50, 730, 830, 50))
         font = QtGui.QFont()
         self.textEdit_5.setFont(font)
         self.textEdit_5.setObjectName("textEdit_5")
@@ -159,6 +153,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_5.setReadOnly(True)
         self.textEdit_5.setStyleSheet("font-size: 16pt;")
         self.update_distamce_info_signal.connect(self.eye_distance)
+
 
         # text box for message
         self.textEdit_3 = QtWidgets.QTextEdit(self.centralwidget)
@@ -191,6 +186,18 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_2.setReadOnly(True)
         self.textEdit_2.setStyleSheet("font-size: 16pt;")
 
+        # text box for how to start the test
+        self.textEdit_6 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_6.setGeometry(QtCore.QRect(1270, 730, 400, 50))
+        font = QtGui.QFont()
+        self.textEdit_6.setObjectName("textEdit_6")
+        self.textEdit_6.setText("Gesture OK to start the test")
+        self.textEdit_6.setReadOnly(True)
+        self.textEdit_6.setStyleSheet("font-size: 16pt;")
+        self.textEdit_6.setVisible(True)
+
+
+
         # text box for the final result
         self.textEdit_4 = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit_4.setGeometry(QtCore.QRect(50, 50, 500, 500))
@@ -217,12 +224,19 @@ class Ui_MainWindow(QtCore.QObject):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(950, 50, 720, 480))
 
+        #label for the frame image of the camera
+        self.label_cameraframe = QtWidgets.QLabel(self.centralwidget)
+        self.label_cameraframe.setGeometry(QtCore.QRect(710, -180, 1200, 1000))
+        self.label_cameraframe.setObjectName("label_cameraframe")
+        self.label_cameraframe.setStyleSheet("image: url(./cameraframe.png);")
+
         # label for whiteboard
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(50, 50, 830, 730))
         self.label_2.setObjectName("label_2")
         self.label_2.setStyleSheet("background-color: black;")
         self.label_2.setVisible(False)
+
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -238,6 +252,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton2.setText("Start")
         self.pushButton2.setStyleSheet("font-size: 16pt;") 
         self.hide_pushbutton2_signal.connect(self.hide_pushbutton2)
+        self.pushButton2.setVisible(False)
 
         #button for change to Chinese
         self.pushButton3 = QtWidgets.QPushButton(self.centralwidget)
@@ -256,7 +271,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton4.setFont(font)
         self.pushButton4.setObjectName("EnglishButton")
         self.pushButton4.setText("English")
-        self.pushButton4.setStyleSheet("font-size: 16pt; background-color: black;")
+        self.pushButton4.setStyleSheet("font-size: 16pt; background-color: white;")
         self.choose_pushbutton4_signal.connect(self.choose_pushbutton4)
         
 
@@ -583,7 +598,7 @@ class Ui_MainWindow(QtCore.QObject):
                             self.choose_pushbutton4_signal.emit(True)
 
                     # gesture YA for quit the application
-                    if vertical_distance_index < -120 and vertical_distance_middle < -120 and vertical_distance_ring > -50 and vertical_distance_pinky > -50:
+                    if vertical_distance_index < -120 and vertical_distance_middle < -120 and vertical_distance_ring > -30 and vertical_distance_pinky > -30:
                         self.quit_signal.emit(True)
 
                     # start when OK gesture
@@ -598,25 +613,25 @@ class Ui_MainWindow(QtCore.QObject):
                     # gesture recognition, round 1 right hand
                     if index_length > 70 and self.pointstart == True:
                         if (handness_label == "Right" and self.round == 1) or (handness_label == "Left" and self.round == 2):
-                            if vertical_distance_index < -80:
+                            if vertical_distance_index < -100:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing up")
                                 elif language_choice == 'Chinese':
                                     self.update_message_signal.emit("指向上方")
                                 self.pointingdirection = 'up'
-                            elif vertical_distance_index > 80:
+                            elif vertical_distance_index > 100:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing down")
                                 elif language_choice == 'Chinese':
                                     self.update_message_signal.emit("指向下方")
                                 self.pointingdirection = 'down'
-                            elif horizental_distance_index < -60:
+                            elif horizental_distance_index < -50:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing left")
                                 elif language_choice == 'Chinese':
                                     self.update_message_signal.emit("指向左方")
                                 self.pointingdirection = 'left'
-                            elif horizental_distance_index > 60:
+                            elif horizental_distance_index > 50:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing right")
                                 elif language_choice == 'Chinese':
