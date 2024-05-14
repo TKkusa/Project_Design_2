@@ -1,7 +1,7 @@
 import sys, cv2, threading
 import mediapipe as mp
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QMovie
 from PyQt5.QtMultimedia import QSound
 from qt_material import apply_stylesheet
 import random
@@ -21,6 +21,7 @@ class Ui_MainWindow(QtCore.QObject):
     hide_pushbutton2_signal = QtCore.pyqtSignal(bool)
     choose_pushbutton3_signal = QtCore.pyqtSignal(bool)
     choose_pushbutton4_signal = QtCore.pyqtSignal(bool)
+    stop_gif_signal = QtCore.pyqtSignal(bool)
     quit_signal = QtCore.pyqtSignal(bool)  
     
     qsound = QSound("")
@@ -90,6 +91,11 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_2.setText("Gesture YA to quit the application")
         self.textEdit_6.setText("Gesture OK to start the test")
         self.textEdit_3.setText("Welcome to VTABIRD! Please choose your preferred language and then show OK gesture.")
+
+    def stop_gif(self):
+        self.loadingmovie.stop()
+        self.label_loading.setVisible(False)
+        self.label_loadingtext.setVisible(False)
         
     #function for screen to user distance information
     def eye_distance(self):
@@ -141,7 +147,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit.setObjectName("textEdit")
         self.textEdit.setText("10s")
         self.textEdit.setReadOnly(True)
-        self.textEdit.setStyleSheet("font-size: 16pt;")
+        self.textEdit.setStyleSheet("font-size: 16pt; background-color: transparent;")
 
         # text box for eye distance
         self.textEdit_5 = QtWidgets.QTextEdit(self.centralwidget)
@@ -151,7 +157,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_5.setObjectName("textEdit_5")
         self.textEdit_5.setText("")
         self.textEdit_5.setReadOnly(True)
-        self.textEdit_5.setStyleSheet("font-size: 16pt;")
+        self.textEdit_5.setStyleSheet("font-size: 16pt; background-color: transparent;")
         self.update_distamce_info_signal.connect(self.eye_distance)
 
 
@@ -162,7 +168,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_3.setObjectName("textEdit_3")
         self.textEdit_3.setText("Please wait for the camera.")
         self.textEdit_3.setReadOnly(True)
-        self.textEdit_3.setStyleSheet("font-size: 16pt;")
+        self.textEdit_3.setStyleSheet("font-size: 16pt; background-color: transparent;")
 
         # button for quit the application
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
@@ -178,36 +184,36 @@ class Ui_MainWindow(QtCore.QObject):
 
         #text box for how to quit the application
         self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit_2.setGeometry(QtCore.QRect(1270, 800, 400, 50))
+        self.textEdit_2.setGeometry(QtCore.QRect(1330, 800, 400, 50))
         font = QtGui.QFont()
         self.textEdit_2.setObjectName("textEdit_2")
         self.textEdit_2.setText("Gesture YA to quit the application")
         self.textEdit_2.setVisible(True)
         self.textEdit_2.setReadOnly(True)
-        self.textEdit_2.setStyleSheet("font-size: 16pt;")
+        self.textEdit_2.setStyleSheet("font-size: 16pt; background-color: transparent;")
 
         # text box for how to start the test
         self.textEdit_6 = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit_6.setGeometry(QtCore.QRect(1270, 730, 400, 50))
+        self.textEdit_6.setGeometry(QtCore.QRect(1330, 730, 400, 50))
         font = QtGui.QFont()
         self.textEdit_6.setObjectName("textEdit_6")
         self.textEdit_6.setText("Gesture OK to start the test")
         self.textEdit_6.setReadOnly(True)
-        self.textEdit_6.setStyleSheet("font-size: 16pt;")
+        self.textEdit_6.setStyleSheet("font-size: 16pt; background-color: transparent;")
         self.textEdit_6.setVisible(True)
 
 
 
         # text box for the final result
         self.textEdit_4 = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit_4.setGeometry(QtCore.QRect(50, 50, 500, 500))
+        self.textEdit_4.setGeometry(QtCore.QRect(50, 50, 800, 500))
         font = QtGui.QFont()
         self.textEdit_4.setFont(font)
         self.textEdit_4.setObjectName("textEdit_4")
         self.textEdit_4.setText("")
         self.textEdit_4.setVisible(False)
         self.textEdit_4.setReadOnly(True)
-        self.textEdit_4.setStyleSheet("font-size: 16pt;")
+        self.textEdit_4.setStyleSheet("font-size: 16pt; background-color: transparent;")
 
         self.textEdit.raise_()
         self.textEdit_3.raise_()        
@@ -224,7 +230,24 @@ class Ui_MainWindow(QtCore.QObject):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(950, 50, 720, 480))
 
-        #label for the frame image of the camera
+        # lable for loading gif
+        self.label_loading = QtWidgets.QLabel(self.centralwidget)
+        self.label_loading.setGeometry(QtCore.QRect(1250, 150, 200, 200))
+        self.label_loading.setObjectName("label_loading")
+        self.loadingmovie = QMovie("./loading.gif")
+        self.label_loading.setMovie(self.loadingmovie)
+        self.loadingmovie.start()
+        self.stop_gif_signal.connect(self.stop_gif)
+
+        # label for loading text
+        self.label_loadingtext = QtWidgets.QLabel(self.centralwidget)
+        self.label_loadingtext.setGeometry(QtCore.QRect(1190, 325, 500, 50))
+        self.label_loadingtext.setObjectName("label_loadingtext")
+        self.label_loadingtext.setText("Loading camera...")
+        self.label_loadingtext.setStyleSheet("font-size: 25pt; color: cyan;")
+        self.label_loadingtext.setVisible(True)
+
+        # label for the frame image of the camera
         self.label_cameraframe = QtWidgets.QLabel(self.centralwidget)
         self.label_cameraframe.setGeometry(QtCore.QRect(710, -180, 1200, 1000))
         self.label_cameraframe.setObjectName("label_cameraframe")
@@ -234,7 +257,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(50, 50, 830, 730))
         self.label_2.setObjectName("label_2")
-        self.label_2.setStyleSheet("background-color: black;")
+        self.label_2.setStyleSheet("background-color: black; border: 3px solid white;")
         self.label_2.setVisible(False)
 
 
@@ -274,7 +297,6 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton4.setStyleSheet("font-size: 16pt; background-color: white;")
         self.choose_pushbutton4_signal.connect(self.choose_pushbutton4)
         
-
         # label for the image of "C"
         self.labelC = QtWidgets.QLabel(self.centralwidget)
         self.labelC.setGeometry(QtCore.QRect(70, 70, 720, 480))
@@ -511,6 +533,7 @@ class Ui_MainWindow(QtCore.QObject):
             exit()
         else:
             self.update_message_signal.emit("Welcome to VTABIRD! Please choose your preferred language and show OK gesture.")
+            self.stop_gif_signal.emit(True)
             
 
         # loop for the gesture recognition
@@ -547,8 +570,6 @@ class Ui_MainWindow(QtCore.QObject):
                 for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
                     # get the handness 
                     handness_label = "Left" if result.multi_handedness[hand_idx].classification[0].label == "Left" else "Right"  
-                    #show landmarks
-                    mpdraw.draw_landmarks(frame, handLms, mphands.HAND_CONNECTIONS, handLmsStyle, handConStyle)
 
                     # the information of every fingers
                     # thumb
