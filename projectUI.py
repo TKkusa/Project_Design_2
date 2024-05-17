@@ -16,13 +16,18 @@ class Ui_MainWindow(QtCore.QObject):
     # signals for updating the message and image
     # avoid updating the GUI from a different thread
     update_message_signal = QtCore.pyqtSignal(str)
-    update_distamce_info_signal = QtCore.pyqtSignal(bool)
+    update_distance_info_signal = QtCore.pyqtSignal(bool)
     update_image_signal = QtCore.pyqtSignal(QImage)
     hide_pushbutton2_signal = QtCore.pyqtSignal(bool)
     choose_pushbutton3_signal = QtCore.pyqtSignal(bool)
     choose_pushbutton4_signal = QtCore.pyqtSignal(bool)
     stop_gif_signal = QtCore.pyqtSignal(bool)
     quit_signal = QtCore.pyqtSignal(bool)  
+    show_arrow_signal = QtCore.pyqtSignal(str)
+    choose_desktop_signal = QtCore.pyqtSignal(bool)
+    choose_laptop_signal = QtCore.pyqtSignal(bool)
+    switch_leftcolumn_signal = QtCore.pyqtSignal(bool)
+    switch_rightcolumn_signal = QtCore.pyqtSignal(bool)
     
     qsound = QSound("")
 
@@ -41,6 +46,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.cap = None              
         self.righteye = ''          # result of the right eye
         self.lefteye = ''           # result of the left eye
+        self.column = 'left'        # left or right
+        self.device = 'laptop'     # desktop or laptop
 
     # button for quit the application
     def quitButton_clicked(self):
@@ -55,6 +62,10 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_6.setVisible(not visibility)
         self.label_2.setVisible(True)
         self.qsound.play('./SoundEffect&Others/Start.wav')
+        self.label_column.setVisible(not visibility)
+        self.label_column2.setVisible(not visibility)
+        self.pushButton5.setVisible(not visibility)
+        self.pushButton6.setVisible(not visibility)
 
     # hide every widget
     def hide_all(self):
@@ -80,6 +91,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_2.setText("手勢YA退出應用程式")
         self.textEdit_6.setText("手勢OK開始測試")
         self.textEdit_3.setText("歡迎使用VTABIRD！請選擇您的偏好語言後展示OK手勢。")
+        self.pushButton5.setText("桌機")
+        self.pushButton6.setText("筆電")
 
     def choose_pushbutton4(self, visibility):
         global language_choice
@@ -91,6 +104,46 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_2.setText("Gesture YA to quit the application")
         self.textEdit_6.setText("Gesture OK to start the test")
         self.textEdit_3.setText("Welcome to VTABIRD! Please choose your preferred language and then show OK gesture.")
+        self.pushButton5.setText("Desktop")
+        self.pushButton6.setText("Labtop")
+    
+    def choose_desktop(self):
+        if self.device == 'laptop':
+            self.device = 'desktop'
+            self.qsound.play('./SoundEffect&Others/select.wav')
+        self.pushButton5.setStyleSheet("font-size: 16pt; background-color: white;")
+        self.pushButton6.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        
+
+    def choose_laptop(self):
+        if self.device == 'desktop':
+            self.device = 'laptop'
+            self.qsound.play('./SoundEffect&Others/select.wav')
+        self.pushButton5.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.pushButton6.setStyleSheet("font-size: 16pt; background-color: white;")
+        
+    def switch_leftcolumn(self):
+
+        self.label_column.setVisible(True)
+        self.label_column2.setVisible(False)
+    
+    def switch_rightcolumn(self):
+
+        self.label_column.setVisible(False)
+        self.label_column2.setVisible(True)
+
+
+    def show_arrow(self, direction):
+        self.label_arrow.setVisible(True)
+        if direction == 'up':
+            self.label_arrow.setStyleSheet("image: url(./up.png); background-color: black; border: 3px solid white;")
+        elif direction == 'down':
+            self.label_arrow.setStyleSheet("image: url(./down.png); background-color: black; border: 3px solid white;")
+        elif direction == 'left':
+            self.label_arrow.setStyleSheet("image: url(./left.png); background-color: black; border: 3px solid white;")
+        elif direction == 'right':
+            self.label_arrow.setStyleSheet("image: url(./right.png); background-color: black; border: 3px solid white;")
+
 
     def stop_gif(self):
         self.loadingmovie.stop()
@@ -119,6 +172,7 @@ class Ui_MainWindow(QtCore.QObject):
     # function for updating the message 
     def update_message(self, message):
         self.textEdit_3.setText(message)   
+        self.label_arrow.setVisible(False)  
     
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -158,7 +212,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_5.setText("")
         self.textEdit_5.setReadOnly(True)
         self.textEdit_5.setStyleSheet("font-size: 16pt; background-color: transparent;")
-        self.update_distamce_info_signal.connect(self.eye_distance)
+        self.update_distance_info_signal.connect(self.eye_distance)
 
 
         # text box for message
@@ -202,8 +256,29 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_6.setStyleSheet("font-size: 16pt; background-color: transparent;")
         self.textEdit_6.setVisible(True)
 
+        # label for arrow
+        self.label_arrow = QtWidgets.QLabel(self.centralwidget)
+        self.label_arrow.setGeometry(QtCore.QRect(1530, 570, 200, 200))
+        self.label_arrow.setObjectName("label_arrow")
+        self.label_arrow.setStyleSheet("image: url(./up.png); background-color: black; border: 3px solid white;")
+        self.label_arrow.setVisible(False)
+        self.show_arrow_signal.connect(self.show_arrow)
 
+        #label for left column
+        self.label_column = QtWidgets.QLabel(self.centralwidget)
+        self.label_column.setGeometry(QtCore.QRect(150, 170, 250, 300))
+        self.label_column.setObjectName("label_column")
+        self.label_column.setStyleSheet("background-color: black; border: 3px solid cyan;")
+        self.label_column.setVisible(True)
 
+        #label for right column
+        self.label_column2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_column2.setGeometry(QtCore.QRect(500, 170, 250, 300))
+        self.label_column2.setObjectName("label_column2")
+        self.label_column2.setStyleSheet("background-color: black; border: 3px solid cyan;")
+        self.label_column2.setVisible(False)
+
+        
         # text box for the final result
         self.textEdit_4 = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit_4.setGeometry(QtCore.QRect(50, 50, 800, 500))
@@ -276,10 +351,10 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton2.setStyleSheet("font-size: 16pt;") 
         self.hide_pushbutton2_signal.connect(self.hide_pushbutton2)
         self.pushButton2.setVisible(False)
-
+        
         #button for change to Chinese
         self.pushButton3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton3.setGeometry(QtCore.QRect(400, 250, 150, 50))
+        self.pushButton3.setGeometry(QtCore.QRect(200, 250, 150, 50))
         font = QtGui.QFont()
         self.pushButton3.setFont(font)
         self.pushButton3.setObjectName("ChineseButton")
@@ -289,13 +364,33 @@ class Ui_MainWindow(QtCore.QObject):
         
         #button for change to English
         self.pushButton4 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton4.setGeometry(QtCore.QRect(400, 350, 150, 50))
+        self.pushButton4.setGeometry(QtCore.QRect(200, 350, 150, 50))
         font = QtGui.QFont()
         self.pushButton4.setFont(font)
         self.pushButton4.setObjectName("EnglishButton")
         self.pushButton4.setText("English")
         self.pushButton4.setStyleSheet("font-size: 16pt; background-color: white;")
         self.choose_pushbutton4_signal.connect(self.choose_pushbutton4)
+
+        #button for choose desktop
+        self.pushButton5 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton5.setGeometry(QtCore.QRect(550, 250, 150, 50))
+        font = QtGui.QFont()
+        self.pushButton5.setFont(font)
+        self.pushButton5.setObjectName("DesktopButton")
+        self.pushButton5.setText("Desktop")
+        self.pushButton5.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.choose_desktop_signal.connect(self.choose_desktop)
+
+        #button for choose laptop
+        self.pushButton6 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton6.setGeometry(QtCore.QRect(550, 350, 150, 50))
+        font = QtGui.QFont()
+        self.pushButton6.setFont(font)
+        self.pushButton6.setObjectName("LaptopButton")
+        self.pushButton6.setText("Laptop")
+        self.pushButton6.setStyleSheet("font-size: 16pt; background-color: white;")
+        self.choose_laptop_signal.connect(self.choose_laptop)
         
         # label for the image of "C"
         self.labelC = QtWidgets.QLabel(self.centralwidget)
@@ -305,6 +400,9 @@ class Ui_MainWindow(QtCore.QObject):
         self.mytimer = QtCore.QTimer()
         self.mytimer.timeout.connect(self.onTimer)
         self.mytimer.start(1000)
+
+        self.switch_leftcolumn_signal.connect(self.switch_leftcolumn)
+        self.switch_rightcolumn_signal.connect(self.switch_rightcolumn)
     
     # function for the image
     def imageprocess(self):
@@ -564,7 +662,7 @@ class Ui_MainWindow(QtCore.QObject):
                             lefteye = int(detection.location_data.relative_keypoints[1].x * imgwidth), int(detection.location_data.relative_keypoints[1].y * imgheight)
                             righteye = int(detection.location_data.relative_keypoints[0].x * imgwidth), int(detection.location_data.relative_keypoints[0].y * imgheight)
                             self.eye_xdistance = lefteye[0] - righteye[0]
-                            self.update_distamce_info_signal.emit(True)
+                            self.update_distance_info_signal.emit(True)
                             
             if result.multi_hand_landmarks:
                 for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
@@ -611,12 +709,28 @@ class Ui_MainWindow(QtCore.QObject):
                     # Distance between thumb and index finger tip
                     distance_thumb_index = int(((thumb_tip[0] - index_finger_tip[0])**2 + (thumb_tip[1] - index_finger_tip[1])**2)**0.5)
 
-                    # gesture for choosing the language
-                    if index_length > 70 and self.teststart == False:
-                        if vertical_distance_index < -60:
-                            self.choose_pushbutton3_signal.emit(True)
-                        elif vertical_distance_index > 60:
-                            self.choose_pushbutton4_signal.emit(True)
+                    # gesture for choosing the language and the device
+                    if self.teststart == False:
+                        if self.column == 'left':
+                            if horizental_distance_index > 70:
+                                self.column = 'right'
+                                self.switch_rightcolumn_signal.emit(True)
+                        elif self.column == 'right':
+                            if horizental_distance_index < -70:
+                                self.column = 'left'
+                                self.switch_leftcolumn_signal.emit(True)
+                                
+                    if self.teststart == False:
+                        if self.column == 'left':
+                            if vertical_distance_index > 80:
+                                self.choose_pushbutton4_signal.emit(True)
+                            elif vertical_distance_index < -80:
+                                self.choose_pushbutton3_signal.emit(True)
+                        elif self.column == 'right':
+                            if vertical_distance_index > 80:
+                                self.choose_laptop_signal.emit(True)
+                            elif vertical_distance_index < -80:
+                                self.choose_desktop_signal.emit(True)
 
                     # gesture YA for quit the application
                     if vertical_distance_index < -120 and vertical_distance_middle < -120 and vertical_distance_ring > -30 and vertical_distance_pinky > -30:
@@ -640,24 +754,28 @@ class Ui_MainWindow(QtCore.QObject):
                                 elif language_choice == 'Chinese':
                                     self.update_message_signal.emit("指向上方")
                                 self.pointingdirection = 'up'
+                                self.show_arrow_signal.emit('up')
                             elif vertical_distance_index > 100:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing down")
                                 elif language_choice == 'Chinese':
                                     self.update_message_signal.emit("指向下方")
                                 self.pointingdirection = 'down'
+                                self.show_arrow_signal.emit('down')
                             elif horizental_distance_index < -50:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing left")
                                 elif language_choice == 'Chinese':
                                     self.update_message_signal.emit("指向左方")
                                 self.pointingdirection = 'left'
+                                self.show_arrow_signal.emit('left')
                             elif horizental_distance_index > 50:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing right")
                                 elif language_choice == 'Chinese':
                                     self.update_message_signal.emit("指向右方")
                                 self.pointingdirection = 'right'
+                                self.show_arrow_signal.emit('right')
                     elif index_length < 70 and self.pointstart == True:
                         if language_choice == 'English':
                             self.update_message_signal.emit("Can't see the notch, pass.")
