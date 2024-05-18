@@ -39,7 +39,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.ocv = True             # open the camera or not
         self.teststart = False      # start the test or not
         self.pointstart = False     # start the pointing or not
-        self.setsize = 100          # original size of the C image
+        self.setsize = 150         # original size of the C image
         self.eye_xdistance = 0      # distance between two eyes
         self.imagedirection = ' '   # direction of the C image
         self.pointingdirection = '' # direction of the pointing
@@ -111,6 +111,7 @@ class Ui_MainWindow(QtCore.QObject):
         if self.device == 'laptop':
             self.device = 'desktop'
             self.qsound.play('./SoundEffect&Others/select.wav')
+            self.setsize = 100
         self.pushButton5.setStyleSheet("font-size: 16pt; background-color: white;")
         self.pushButton6.setStyleSheet("font-size: 16pt; background-color: transparent;")
         
@@ -119,6 +120,7 @@ class Ui_MainWindow(QtCore.QObject):
         if self.device == 'desktop':
             self.device = 'laptop'
             self.qsound.play('./SoundEffect&Others/select.wav')
+            self.setsize = 150
         self.pushButton5.setStyleSheet("font-size: 16pt; background-color: transparent;")
         self.pushButton6.setStyleSheet("font-size: 16pt; background-color: white;")
         
@@ -479,86 +481,169 @@ class Ui_MainWindow(QtCore.QObject):
 
     # vision test event handler
     def vision_test(self):
-        if etv.level_now == 0.1:     
-            if self.pointingdirection == self.imagedirection:  
-                etv.visionlevel_correctimes[etv.level_now] += 1           
-                etv.level_now = 0.2 
-                self.setsize = 50
-            else:
-                etv.lowest_wrongtimes += 1
-                self.setsize = 100
-        elif etv.level_now == 0.2:
-            if self.pointingdirection == self.imagedirection:
-                etv.visionlevel_correctimes[etv.level_now] += 1
-                etv.level_now = 0.3
-                self.setsize = 33                       
-            else:
-                etv.level_now = 0.1
-                self.setsize = 100
-        elif etv.level_now == 0.3:
-            if self.pointingdirection == self.imagedirection:
-                etv.visionlevel_correctimes[etv.level_now] += 1
-                etv.level_now = 0.4
-                self.setsize = 25
-            else:
-                etv.level_now = 0.2
-                self.setsize = 50
-        elif etv.level_now == 0.4:
-            if self.pointingdirection == self.imagedirection:
-                etv.visionlevel_correctimes[etv.level_now] += 1
-                etv.level_now = 0.5
-                self.setsize = 20
-            else:
-                etv.level_now = 0.3
-                self.setsize = 33
-        elif etv.level_now == 0.5:
-            if self.pointingdirection == self.imagedirection:
-                etv.visionlevel_correctimes[etv.level_now] += 1
-                etv.level_now = 0.6
-                self.setsize = 17
-            else:
-                etv.level_now = 0.4
-                self.setsize = 25
-        elif etv.level_now == 0.6:
-            if self.pointingdirection == self.imagedirection:
-                etv.visionlevel_correctimes[etv.level_now] += 1
-                etv.level_now = 0.7
-                self.setsize = 14
-            else:
-                etv.level_now = 0.5
-                self.setsize = 20
-        elif etv.level_now == 0.7:
-            if self.pointingdirection == self.imagedirection:
-                etv.visionlevel_correctimes[etv.level_now] += 1
-                etv.level_now = 0.8
-                self.setsize = 12
-            else:
-                etv.level_now = 0.6
-                self.setsize = 17
-        elif etv.level_now == 0.8:
-            if self.pointingdirection == self.imagedirection:
-                etv.visionlevel_correctimes[etv.level_now] += 1
-                etv.level_now = 0.9
-                self.setsize = 11
-            else:
-                etv.level_now = 0.7
-                self.setsize = 14
-        elif etv.level_now == 0.9:
-            if self.pointingdirection == self.imagedirection:
+        if self.device == 'desktop':
+            if etv.level_now == 0.1:     
+                if self.pointingdirection == self.imagedirection:  
+                    etv.visionlevel_correctimes[etv.level_now] += 1           
+                    etv.level_now = 0.2 
+                    self.setsize = 50
+                else:
+                    etv.lowest_wrongtimes += 1
+                    self.setsize = 100
+            elif etv.level_now == 0.2:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.3
+                    self.setsize = 33                       
+                else:
+                    etv.level_now = 0.1
+                    self.setsize = 100
+            elif etv.level_now == 0.3:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.4
+                    self.setsize = 25
+                else:
+                    etv.level_now = 0.2
+                    self.setsize = 50
+            elif etv.level_now == 0.4:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.5
+                    self.setsize = 20
+                else:
+                    etv.level_now = 0.3
+                    self.setsize = 33
+            elif etv.level_now == 0.5:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.6
+                    self.setsize = 17
+                else:
+                    etv.level_now = 0.4
+                    self.setsize = 25
+            elif etv.level_now == 0.6:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.7
+                    self.setsize = 14
+                else:
+                    etv.level_now = 0.5
+                    self.setsize = 20
+            elif etv.level_now == 0.7:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.8
+                    self.setsize = 12
+                else:
+                    etv.level_now = 0.6
+                    self.setsize = 17
+            elif etv.level_now == 0.8:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.9
+                    self.setsize = 11
+                else:
+                    etv.level_now = 0.7
+                    self.setsize = 14
+            elif etv.level_now == 0.9:
+                if self.pointingdirection == self.imagedirection:
 
-                etv.visionlevel_correctimes[etv.level_now] += 1
-                etv.level_now = 1.0
-                self.setsize = 10
-            else:
-                etv.level_now = 0.8
-                self.setsize = 12
-        elif etv.level_now == 1.0:
-            if self.pointingdirection == self.imagedirection:
-                etv.visionlevel_correctimes[etv.level_now] += 1
-                self.setsize = 10
-            else:
-                etv.level_now = 0.9
-                self.setsize = 11
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 1.0
+                    self.setsize = 10
+                else:
+                    etv.level_now = 0.8
+                    self.setsize = 12
+            elif etv.level_now == 1.0:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    self.setsize = 10
+                else:
+                    etv.level_now = 0.9
+                    self.setsize = 11
+        elif self.device == 'laptop':
+            if etv.level_now == 0.1:     
+                if self.pointingdirection == self.imagedirection:  
+                    etv.visionlevel_correctimes[etv.level_now] += 1           
+                    etv.level_now = 0.2 
+                    self.setsize = 75
+                else:
+                    etv.lowest_wrongtimes += 1
+                    self.setsize = 150
+            elif etv.level_now == 0.2:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.3
+                    self.setsize = 50                       
+                else:
+                    etv.level_now = 0.1
+                    self.setsize = 150
+            elif etv.level_now == 0.3:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.4
+                    self.setsize = 38
+                else:
+                    etv.level_now = 0.2
+                    self.setsize = 75
+            elif etv.level_now == 0.4:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.5
+                    self.setsize = 30
+                else:
+                    etv.level_now = 0.3
+                    self.setsize = 50
+            elif etv.level_now == 0.5:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.6
+                    self.setsize = 25
+                else:
+                    etv.level_now = 0.4
+                    self.setsize = 38
+            elif etv.level_now == 0.6:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.7
+                    self.setsize = 23
+                else:
+                    etv.level_now = 0.5
+                    self.setsize = 30
+            elif etv.level_now == 0.7:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.8
+                    self.setsize = 19
+                else:
+                    etv.level_now = 0.6
+                    self.setsize = 25
+            elif etv.level_now == 0.8:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 0.9
+                    self.setsize = 17
+                else:
+                    etv.level_now = 0.7
+                    self.setsize = 23
+            elif etv.level_now == 0.9:
+                if self.pointingdirection == self.imagedirection:
+
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    etv.level_now = 1.0
+                    self.setsize = 15
+                else:
+                    etv.level_now = 0.8
+                    self.setsize = 19
+            elif etv.level_now == 1.0:
+                if self.pointingdirection == self.imagedirection:
+                    etv.visionlevel_correctimes[etv.level_now] += 1
+                    self.setsize = 15
+                else:
+                    etv.level_now = 0.9
+                    self.setsize = 17
+            
 
     # check the vision level of two eyes
     def check_vision_level(self):
@@ -712,24 +797,24 @@ class Ui_MainWindow(QtCore.QObject):
                     # gesture for choosing the language and the device
                     if self.teststart == False:
                         if self.column == 'left':
-                            if horizental_distance_index > 70:
+                            if horizental_distance_index > 100:
                                 self.column = 'right'
                                 self.switch_rightcolumn_signal.emit(True)
                         elif self.column == 'right':
-                            if horizental_distance_index < -70:
+                            if horizental_distance_index < -90:
                                 self.column = 'left'
                                 self.switch_leftcolumn_signal.emit(True)
                                 
                     if self.teststart == False:
                         if self.column == 'left':
-                            if vertical_distance_index > 80:
+                            if vertical_distance_index > 100:
                                 self.choose_pushbutton4_signal.emit(True)
-                            elif vertical_distance_index < -80:
+                            elif vertical_distance_index < -100:
                                 self.choose_pushbutton3_signal.emit(True)
                         elif self.column == 'right':
-                            if vertical_distance_index > 80:
+                            if vertical_distance_index > 100:
                                 self.choose_laptop_signal.emit(True)
-                            elif vertical_distance_index < -80:
+                            elif vertical_distance_index < -100:
                                 self.choose_desktop_signal.emit(True)
 
                     # gesture YA for quit the application
