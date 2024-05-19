@@ -66,6 +66,71 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_column2.setVisible(not visibility)
         self.pushButton5.setVisible(not visibility)
         self.pushButton6.setVisible(not visibility)
+        if language_choice == 'Chinese':
+            self.textbox_final2.setText(f"視力檢查合格標準請參照下方表格\n\n\n本測驗為居家簡易檢測，數值僅供參考\n如有疑慮請至眼科進行進一步檢查\n\n\nVTABIRD關心您的視力健康")
+            item00 = QtWidgets.QTableWidgetItem("年齡")
+            item00.setTextAlignment(QtCore.Qt.AlignCenter)
+            # set the item border color
+            self.tableWidget.setItem(0, 0, item00)
+            item01 = QtWidgets.QTableWidgetItem("4歲")
+            item01.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(0, 1, item01)
+            item02 = QtWidgets.QTableWidgetItem("5歲")
+            item02.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(0, 2, item02)
+            item03 = QtWidgets.QTableWidgetItem("6歲")
+            item03.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(0, 3, item03)
+            item04 = QtWidgets.QTableWidgetItem("7歲或以上")
+            item04.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(0, 4, item04)
+            item10 = QtWidgets.QTableWidgetItem("視力標準")
+            item10.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(1, 0, item10)
+            item11 = QtWidgets.QTableWidgetItem("0.6")
+            item11.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(1, 1, item11)
+            item12 = QtWidgets.QTableWidgetItem("0.7")
+            item12.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(1, 2, item12)
+            item13 = QtWidgets.QTableWidgetItem("0.8")
+            item13.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(1, 3, item13)
+            item14 = QtWidgets.QTableWidgetItem("0.9")
+            item14.setTextAlignment(QtCore.Qt.AlignCenter)  
+            self.tableWidget.setItem(1, 4, item14)       
+        elif language_choice == 'English':
+            self.textbox_final2.setText(f"Please refer to the table below for the standard\n\n\nThis test is a simple self-examination, the values are for reference only\nIf you have any concerns, please go to clinic for further examination\n\n\nVTABIRD cares about your vision health")
+            item00 = QtWidgets.QTableWidgetItem("Age")
+            item00.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(0, 0, item00)
+            item01 = QtWidgets.QTableWidgetItem("4 years")
+            item01.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(0, 1, item01)
+            item02 = QtWidgets.QTableWidgetItem("5 years")
+            item02.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(0, 2, item02)
+            item03 = QtWidgets.QTableWidgetItem("6 years")
+            item03.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(0, 3, item03)
+            item04 = QtWidgets.QTableWidgetItem("7 years or above")
+            item04.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(0, 4, item04)
+            item10 = QtWidgets.QTableWidgetItem("Vision Standard")
+            item10.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(1, 0, item10)
+            item11 = QtWidgets.QTableWidgetItem("0.6")
+            item11.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(1, 1, item11)
+            item12 = QtWidgets.QTableWidgetItem("0.7")
+            item12.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(1, 2, item12)
+            item13 = QtWidgets.QTableWidgetItem("0.8")
+            item13.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(1, 3, item13)
+            item14 = QtWidgets.QTableWidgetItem("0.9")
+            item14.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.tableWidget.setItem(1, 4, item14)        
 
     # hide every widget
     def hide_all(self):
@@ -78,7 +143,9 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_3.setVisible(False)
         self.pushButton.setVisible(False)
         self.textEdit_5.setVisible(False)
-        self.textEdit_4.setVisible(True)
+        self.label_arrow.setVisible(False)
+        self.textbox_final1.setVisible(True)
+        self.textbox_final2.setVisible(True)
     
     #function for set the pushbutton3 black
     def choose_pushbutton3(self, visibility):
@@ -282,15 +349,26 @@ class Ui_MainWindow(QtCore.QObject):
 
         
         # text box for the final result
-        self.textEdit_4 = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit_4.setGeometry(QtCore.QRect(50, 50, 800, 500))
+        self.textbox_final1 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textbox_final1.setGeometry(QtCore.QRect(50, 50, 800, 200))
         font = QtGui.QFont()
-        self.textEdit_4.setFont(font)
-        self.textEdit_4.setObjectName("textEdit_4")
-        self.textEdit_4.setText("")
-        self.textEdit_4.setVisible(False)
-        self.textEdit_4.setReadOnly(True)
-        self.textEdit_4.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.textbox_final1.setFont(font)
+        self.textbox_final1.setObjectName("textEdit_4")
+        self.textbox_final1.setText("")
+        self.textbox_final1.setVisible(False)
+        self.textbox_final1.setReadOnly(True)
+        self.textbox_final1.setStyleSheet("font-size: 16pt; background-color: transparent;")
+
+        # text box 2 for the final result
+        self.textbox_final2 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textbox_final2.setGeometry(QtCore.QRect(50, 300, 800, 250))
+        font = QtGui.QFont()
+        self.textbox_final2.setFont(font)
+        self.textbox_final2.setObjectName("textEdit_7")
+        self.textbox_final2.setText("")
+        self.textbox_final2.setVisible(False)
+        self.textbox_final2.setReadOnly(True)
+        self.textbox_final2.setStyleSheet("font-size: 16pt; background-color: transparent;")
 
         self.textEdit.raise_()
         self.textEdit_3.raise_()        
@@ -398,6 +476,23 @@ class Ui_MainWindow(QtCore.QObject):
         self.labelC = QtWidgets.QLabel(self.centralwidget)
         self.labelC.setGeometry(QtCore.QRect(70, 70, 720, 480))
 
+        # table for the vision standard
+        self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
+        self.tableWidget.setGeometry(QtCore.QRect(50, 600, 1200, 250))
+        self.tableWidget.setObjectName("tableWidget")
+        self.tableWidget.setColumnCount(5)
+        self.tableWidget.setRowCount(2)
+        self.tableWidget.setStyleSheet("font-size: 16pt; background-color: transparent; color: white; border: 3px solid cyan;")
+        self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.tableWidget.horizontalHeader().setVisible(False)
+        self.tableWidget.verticalHeader().setVisible(False)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        self.tableWidget.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        self.tableWidget.setVisible(False)
+
+
+
+
         # timer for any event
         self.mytimer = QtCore.QTimer()
         self.mytimer.timeout.connect(self.onTimer)
@@ -476,6 +571,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.round = 2
         self.counter = 11
         self.labelC.setVisible(False)
+        self.label_arrow.setVisible(False)
         etv.lowest_wrongtimes = -1
         etv.level_now = 0.1
 
@@ -684,18 +780,30 @@ class Ui_MainWindow(QtCore.QObject):
                     self.lefteye = f'Your left eye vision level is less than 0.1'
                 elif language_choice == 'Chinese':
                     self.lefteye = f'您的左眼視力等級小於0.1'
-                self.textEdit_4.setText(f"{self.righteye}\n\n{self.lefteye}")
+                if language_choice == 'Chinese':
+                    self.textbox_final1.setText(f"檢測結果\n\n\n{self.righteye}\n\n{self.lefteye}")
+                elif language_choice == 'English':
+                    self.textbox_final1.setText(f"Test Results\n\n\n{self.righteye}\n\n{self.lefteye}")
                 self.hide_all()
                 self.mytimer.stop()
+                self.pointstart = False
+                self.tableWidget.setVisible(True)
             for level, times in etv.visionlevel_correctimes.items():
                 if times >= 3:
                     if language_choice == 'English':
                         self.lefteye = f"Your left eye vision level is approximately {level}."
                     elif language_choice == 'Chinese':
                         self.lefteye = f"您的左眼視力等級約為{level}。"
-                    self.textEdit_4.setText(f"{self.righteye}\n\n{self.lefteye}")
+                    if language_choice == 'Chinese':
+                        self.textbox_final1.setText(f"檢測結果\n\n\n{self.righteye}\n\n{self.lefteye}")
+                    elif language_choice == 'English':
+                        self.textbox_final1.setText(f"Test Results\n\n\n{self.righteye}\n\n{self.lefteye}")
                     self.hide_all()
                     self.mytimer.stop()
+                    self.pointstart = False
+                    self.tableWidget.setVisible(True)
+
+        
 
     # function for the camera
     def opencv(self):
