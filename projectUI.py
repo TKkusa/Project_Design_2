@@ -263,34 +263,31 @@ class Ui_MainWindow(QtCore.QObject):
         MainWindow.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.FramelessWindowHint)
 
         # text box for time limit
-        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit = QtWidgets.QPushButton(self.centralwidget)
         self.textEdit.setGeometry(QtCore.QRect(900, 730, 150, 50))
         font = QtGui.QFont()     
         self.textEdit.setFont(font)
         self.textEdit.setObjectName("textEdit")
         self.textEdit.setText("10s")
-        self.textEdit.setReadOnly(True)
         self.textEdit.setStyleSheet("font-size: 16pt; background-color: transparent;")
 
         # text box for eye distance
-        self.textEdit_5 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_5 = QtWidgets.QPushButton(self.centralwidget)
         self.textEdit_5.setGeometry(QtCore.QRect(50, 730, 830, 50))
         font = QtGui.QFont()
         self.textEdit_5.setFont(font)
         self.textEdit_5.setObjectName("textEdit_5")
         self.textEdit_5.setText("")
-        self.textEdit_5.setReadOnly(True)
         self.textEdit_5.setStyleSheet("font-size: 16pt; background-color: transparent;")
         self.update_distance_info_signal.connect(self.eye_distance)
 
 
         # text box for message
-        self.textEdit_3 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_3 = QtWidgets.QPushButton(self.centralwidget)
         self.textEdit_3.setGeometry(QtCore.QRect(50, 800, 1000, 50))
         font = QtGui.QFont()
         self.textEdit_3.setObjectName("textEdit_3")
         self.textEdit_3.setText("Please wait for the camera.")
-        self.textEdit_3.setReadOnly(True)
         self.textEdit_3.setStyleSheet("font-size: 16pt; background-color: transparent;")
 
         # button for quit the application
@@ -306,22 +303,20 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton.setStyleSheet("font-size: 16pt;")
 
         #text box for how to quit the application
-        self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_2 = QtWidgets.QPushButton(self.centralwidget)
         self.textEdit_2.setGeometry(QtCore.QRect(1330, 800, 400, 50))
         font = QtGui.QFont()
         self.textEdit_2.setObjectName("textEdit_2")
         self.textEdit_2.setText("Gesture YA to quit the application")
         self.textEdit_2.setVisible(True)
-        self.textEdit_2.setReadOnly(True)
         self.textEdit_2.setStyleSheet("font-size: 16pt; background-color: transparent;")
 
         # text box for how to start the test
-        self.textEdit_6 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_6 = QtWidgets.QPushButton(self.centralwidget)
         self.textEdit_6.setGeometry(QtCore.QRect(1330, 730, 400, 50))
         font = QtGui.QFont()
         self.textEdit_6.setObjectName("textEdit_6")
         self.textEdit_6.setText("Gesture OK to start the test")
-        self.textEdit_6.setReadOnly(True)
         self.textEdit_6.setStyleSheet("font-size: 16pt; background-color: transparent;")
         self.textEdit_6.setVisible(True)
 
@@ -349,25 +344,23 @@ class Ui_MainWindow(QtCore.QObject):
 
         
         # text box for the final result
-        self.textbox_final1 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textbox_final1 = QtWidgets.QPushButton(self.centralwidget)
         self.textbox_final1.setGeometry(QtCore.QRect(50, 50, 800, 200))
         font = QtGui.QFont()
         self.textbox_final1.setFont(font)
         self.textbox_final1.setObjectName("textEdit_4")
         self.textbox_final1.setText("")
         self.textbox_final1.setVisible(False)
-        self.textbox_final1.setReadOnly(True)
         self.textbox_final1.setStyleSheet("font-size: 16pt; background-color: transparent;")
 
         # text box 2 for the final result
-        self.textbox_final2 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textbox_final2 = QtWidgets.QPushButton(self.centralwidget)
         self.textbox_final2.setGeometry(QtCore.QRect(50, 300, 800, 250))
         font = QtGui.QFont()
         self.textbox_final2.setFont(font)
         self.textbox_final2.setObjectName("textEdit_7")
         self.textbox_final2.setText("")
         self.textbox_final2.setVisible(False)
-        self.textbox_final2.setReadOnly(True)
         self.textbox_final2.setStyleSheet("font-size: 16pt; background-color: transparent;")
 
         self.textEdit.raise_()
