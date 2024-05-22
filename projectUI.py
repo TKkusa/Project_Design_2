@@ -152,8 +152,8 @@ class Ui_MainWindow(QtCore.QObject):
         global language_choice       
         if language_choice == 'English':
             self.qsound.play('./SoundEffect&Others/select.wav')
-        self.pushButton3.setStyleSheet("font-size: 16pt; background-color: white;")
-        self.pushButton4.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.pushButton3.setStyleSheet("font-size: 14pt; background-color: white;")
+        self.pushButton4.setStyleSheet("font-size: 14pt; background-color: transparent;")
         language_choice = 'Chinese'
         self.textEdit_2.setText("手勢YA退出應用程式")
         self.textEdit_6.setText("手勢OK開始測試")
@@ -165,12 +165,12 @@ class Ui_MainWindow(QtCore.QObject):
         global language_choice
         if language_choice == 'Chinese':
             self.qsound.play('./SoundEffect&Others/select.wav')
-        self.pushButton3.setStyleSheet("font-size: 16pt; background-color: transparent;")
-        self.pushButton4.setStyleSheet("font-size: 16pt; background-color: white;")
+        self.pushButton3.setStyleSheet("font-size: 14pt; background-color: transparent;")
+        self.pushButton4.setStyleSheet("font-size: 14pt; background-color: white;")
         language_choice = 'English'
-        self.textEdit_2.setText("Gesture YA to quit the application")
-        self.textEdit_6.setText("Gesture OK to start the test")
-        self.textEdit_3.setText("Welcome to VTABIRD! Please choose your preferred language and then show OK gesture.")
+        self.textEdit_2.setText("Gesture YA to quit")
+        self.textEdit_6.setText("Gesture OK to start")
+        self.textEdit_3.setText("Please choose your preferred language and device.")
         self.pushButton5.setText("Desktop")
         self.pushButton6.setText("Labtop")
     
@@ -179,8 +179,8 @@ class Ui_MainWindow(QtCore.QObject):
             self.device = 'desktop'
             self.qsound.play('./SoundEffect&Others/select.wav')
             self.setsize = 100
-        self.pushButton5.setStyleSheet("font-size: 16pt; background-color: white;")
-        self.pushButton6.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.pushButton5.setStyleSheet("font-size: 14pt; background-color: white;")
+        self.pushButton6.setStyleSheet("font-size: 14pt; background-color: transparent;")
         
 
     def choose_laptop(self):
@@ -188,8 +188,8 @@ class Ui_MainWindow(QtCore.QObject):
             self.device = 'laptop'
             self.qsound.play('./SoundEffect&Others/select.wav')
             self.setsize = 150
-        self.pushButton5.setStyleSheet("font-size: 16pt; background-color: transparent;")
-        self.pushButton6.setStyleSheet("font-size: 16pt; background-color: white;")
+        self.pushButton5.setStyleSheet("font-size: 14pt; background-color: transparent;")
+        self.pushButton6.setStyleSheet("font-size: 14pt; background-color: white;")
         
     def switch_leftcolumn(self):
 
@@ -269,7 +269,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit.setFont(font)
         self.textEdit.setObjectName("textEdit")
         self.textEdit.setText("10s")
-        self.textEdit.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.textEdit.setStyleSheet("font-size: 14pt; background-color: transparent;")
 
         # text box for eye distance
         self.textEdit_5 = QtWidgets.QPushButton(self.centralwidget)
@@ -278,7 +278,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_5.setFont(font)
         self.textEdit_5.setObjectName("textEdit_5")
         self.textEdit_5.setText("")
-        self.textEdit_5.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent;")
         self.update_distance_info_signal.connect(self.eye_distance)
 
 
@@ -288,7 +288,7 @@ class Ui_MainWindow(QtCore.QObject):
         font = QtGui.QFont()
         self.textEdit_3.setObjectName("textEdit_3")
         self.textEdit_3.setText("Please wait for the camera.")
-        self.textEdit_3.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.textEdit_3.setStyleSheet("font-size: 14pt; background-color: transparent;")
 
         # button for quit the application
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
@@ -296,28 +296,28 @@ class Ui_MainWindow(QtCore.QObject):
         font = QtGui.QFont()
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("quitButton")
-        self.pushButton.setText("Gesture YA to quit the application")
+        self.pushButton.setText("Gesture YA to quit ")
         self.pushButton.clicked.connect(self.quitButton_clicked)
         self.quit_signal.connect(self.quitButton_clicked)
         self.pushButton.setVisible(False)
-        self.pushButton.setStyleSheet("font-size: 16pt;")
+        self.pushButton.setStyleSheet("font-size: 14pt;")
 
         #text box for how to quit the application
         self.textEdit_2 = QtWidgets.QPushButton(self.centralwidget)
         self.textEdit_2.setGeometry(QtCore.QRect(1330, 800, 400, 50))
         font = QtGui.QFont()
         self.textEdit_2.setObjectName("textEdit_2")
-        self.textEdit_2.setText("Gesture YA to quit the application")
+        self.textEdit_2.setText("Gesture YA to quit ")
         self.textEdit_2.setVisible(True)
-        self.textEdit_2.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.textEdit_2.setStyleSheet("font-size: 14pt; background-color: transparent;")
 
         # text box for how to start the test
         self.textEdit_6 = QtWidgets.QPushButton(self.centralwidget)
         self.textEdit_6.setGeometry(QtCore.QRect(1330, 730, 400, 50))
         font = QtGui.QFont()
         self.textEdit_6.setObjectName("textEdit_6")
-        self.textEdit_6.setText("Gesture OK to start the test")
-        self.textEdit_6.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.textEdit_6.setText("Gesture OK to start ")
+        self.textEdit_6.setStyleSheet("font-size: 14pt; background-color: transparent;")
         self.textEdit_6.setVisible(True)
 
         # label for arrow
@@ -344,24 +344,24 @@ class Ui_MainWindow(QtCore.QObject):
 
         
         # text box for the final result
-        self.textbox_final1 = QtWidgets.QPushButton(self.centralwidget)
+        self.textbox_final1 = QtWidgets.QTextEdit(self.centralwidget)
         self.textbox_final1.setGeometry(QtCore.QRect(50, 50, 800, 200))
         font = QtGui.QFont()
         self.textbox_final1.setFont(font)
         self.textbox_final1.setObjectName("textEdit_4")
         self.textbox_final1.setText("")
         self.textbox_final1.setVisible(False)
-        self.textbox_final1.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.textbox_final1.setStyleSheet("font-size: 14pt; background-color: transparent;")
 
         # text box 2 for the final result
-        self.textbox_final2 = QtWidgets.QPushButton(self.centralwidget)
+        self.textbox_final2 = QtWidgets.QTextEdit(self.centralwidget)
         self.textbox_final2.setGeometry(QtCore.QRect(50, 300, 800, 250))
         font = QtGui.QFont()
         self.textbox_final2.setFont(font)
         self.textbox_final2.setObjectName("textEdit_7")
         self.textbox_final2.setText("")
         self.textbox_final2.setVisible(False)
-        self.textbox_final2.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.textbox_final2.setStyleSheet("font-size: 14pt; background-color: transparent;")
 
         self.textEdit.raise_()
         self.textEdit_3.raise_()        
@@ -421,7 +421,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton2.setFont(font)
         self.pushButton2.setObjectName("StartButton")
         self.pushButton2.setText("Start")
-        self.pushButton2.setStyleSheet("font-size: 16pt;") 
+        self.pushButton2.setStyleSheet("font-size: 14pt;") 
         self.hide_pushbutton2_signal.connect(self.hide_pushbutton2)
         self.pushButton2.setVisible(False)
         
@@ -432,7 +432,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton3.setFont(font)
         self.pushButton3.setObjectName("ChineseButton")
         self.pushButton3.setText("中文")
-        self.pushButton3.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.pushButton3.setStyleSheet("font-size: 14pt; background-color: transparent;")
         self.choose_pushbutton3_signal.connect(self.choose_pushbutton3)
         
         #button for change to English
@@ -442,7 +442,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton4.setFont(font)
         self.pushButton4.setObjectName("EnglishButton")
         self.pushButton4.setText("English")
-        self.pushButton4.setStyleSheet("font-size: 16pt; background-color: white;")
+        self.pushButton4.setStyleSheet("font-size: 14pt; background-color: white;")
         self.choose_pushbutton4_signal.connect(self.choose_pushbutton4)
 
         #button for choose desktop
@@ -452,7 +452,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton5.setFont(font)
         self.pushButton5.setObjectName("DesktopButton")
         self.pushButton5.setText("Desktop")
-        self.pushButton5.setStyleSheet("font-size: 16pt; background-color: transparent;")
+        self.pushButton5.setStyleSheet("font-size: 14pt; background-color: transparent;")
         self.choose_desktop_signal.connect(self.choose_desktop)
 
         #button for choose laptop
@@ -462,7 +462,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton6.setFont(font)
         self.pushButton6.setObjectName("LaptopButton")
         self.pushButton6.setText("Laptop")
-        self.pushButton6.setStyleSheet("font-size: 16pt; background-color: white;")
+        self.pushButton6.setStyleSheet("font-size: 14pt; background-color: white;")
         self.choose_laptop_signal.connect(self.choose_laptop)
         
         # label for the image of "C"
@@ -475,7 +475,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(5)
         self.tableWidget.setRowCount(2)
-        self.tableWidget.setStyleSheet("font-size: 16pt; background-color: transparent; color: white; border: 3px solid cyan;")
+        self.tableWidget.setStyleSheet("font-size: 14pt; background-color: transparent; color: white; border: 3px solid cyan;")
         self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.tableWidget.horizontalHeader().setVisible(False)
         self.tableWidget.verticalHeader().setVisible(False)
@@ -816,7 +816,7 @@ class Ui_MainWindow(QtCore.QObject):
             print("Error: Could not open camera.")
             exit()
         else:
-            self.update_message_signal.emit("Welcome to VTABIRD! Please choose your preferred language and show OK gesture.")
+            self.update_message_signal.emit("Please choose your preferred language and device.")
             self.stop_gif_signal.emit(True)
             
 
