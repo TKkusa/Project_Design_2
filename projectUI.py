@@ -66,6 +66,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_column2.setVisible(not visibility)
         self.pushButton5.setVisible(not visibility)
         self.pushButton6.setVisible(not visibility)
+        self.label_glass.setVisible(not visibility)
+        self.textEdit_5.setVisible(not visibility)
         if language_choice == 'Chinese':
             self.textbox_final2.setText(f"視力檢查合格標準請參照下方表格\n\n\n本測驗為居家簡易檢測，數值僅供參考\n如有疑慮請至眼科進行進一步檢查\n\n\nVTABIRD關心您的視力健康")
             item00 = QtWidgets.QTableWidgetItem("年齡")
@@ -264,7 +266,7 @@ class Ui_MainWindow(QtCore.QObject):
 
         # text box for time limit
         self.textEdit = QtWidgets.QPushButton(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(900, 730, 150, 50))
+        self.textEdit.setGeometry(QtCore.QRect(930, 730, 150, 50))
         font = QtGui.QFont()     
         self.textEdit.setFont(font)
         self.textEdit.setObjectName("textEdit")
@@ -273,7 +275,7 @@ class Ui_MainWindow(QtCore.QObject):
 
         # text box for eye distance
         self.textEdit_5 = QtWidgets.QPushButton(self.centralwidget)
-        self.textEdit_5.setGeometry(QtCore.QRect(50, 730, 830, 50))
+        self.textEdit_5.setGeometry(QtCore.QRect(80, 730, 830, 50))
         font = QtGui.QFont()
         self.textEdit_5.setFont(font)
         self.textEdit_5.setObjectName("textEdit_5")
@@ -284,15 +286,28 @@ class Ui_MainWindow(QtCore.QObject):
 
         # text box for message
         self.textEdit_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.textEdit_3.setGeometry(QtCore.QRect(50, 800, 1000, 50))
+        self.textEdit_3.setGeometry(QtCore.QRect(80, 800, 1000, 50))
         font = QtGui.QFont()
         self.textEdit_3.setObjectName("textEdit_3")
         self.textEdit_3.setText("Please wait for the camera.")
         self.textEdit_3.setStyleSheet("font-size: 14pt; background-color: transparent;")
 
+        # label for image in the information part
+        self.label_info = QtWidgets.QLabel(self.centralwidget)
+        self.label_info.setGeometry(QtCore.QRect(50, 580, 1080, 400))
+        self.label_info.setObjectName("label_info")
+        self.label_info.setStyleSheet("image: url(./glass2.png); ")
+
+        # label for image in gesture part
+        self.label_gesture = QtWidgets.QLabel(self.centralwidget)
+        self.label_gesture.setGeometry(QtCore.QRect(1150, 580, 580, 400))
+        self.label_gesture.setObjectName("label_gesture")
+        self.label_gesture.setStyleSheet("image: url(./glass3.png); ")
+        
+
         # button for quit the application
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(1270, 800, 400, 50))
+        self.pushButton.setGeometry(QtCore.QRect(1270, 800, 370, 50))
         font = QtGui.QFont()
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("quitButton")
@@ -304,7 +319,7 @@ class Ui_MainWindow(QtCore.QObject):
 
         #text box for how to quit the application
         self.textEdit_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.textEdit_2.setGeometry(QtCore.QRect(1330, 800, 400, 50))
+        self.textEdit_2.setGeometry(QtCore.QRect(1200, 800, 500, 50))
         font = QtGui.QFont()
         self.textEdit_2.setObjectName("textEdit_2")
         self.textEdit_2.setText("Gesture YA to quit ")
@@ -313,7 +328,7 @@ class Ui_MainWindow(QtCore.QObject):
 
         # text box for how to start the test
         self.textEdit_6 = QtWidgets.QPushButton(self.centralwidget)
-        self.textEdit_6.setGeometry(QtCore.QRect(1330, 730, 400, 50))
+        self.textEdit_6.setGeometry(QtCore.QRect(1200, 730, 500, 50))
         font = QtGui.QFont()
         self.textEdit_6.setObjectName("textEdit_6")
         self.textEdit_6.setText("Gesture OK to start ")
@@ -322,7 +337,7 @@ class Ui_MainWindow(QtCore.QObject):
 
         # label for arrow
         self.label_arrow = QtWidgets.QLabel(self.centralwidget)
-        self.label_arrow.setGeometry(QtCore.QRect(1530, 570, 200, 200))
+        self.label_arrow.setGeometry(QtCore.QRect(1500, 590, 200, 200))
         self.label_arrow.setObjectName("label_arrow")
         self.label_arrow.setStyleSheet("image: url(./up.png); background-color: black; border: 3px solid white;")
         self.label_arrow.setVisible(False)
@@ -363,17 +378,6 @@ class Ui_MainWindow(QtCore.QObject):
         self.textbox_final2.setVisible(False)
         self.textbox_final2.setStyleSheet("font-size: 14pt; background-color: transparent;")
 
-        self.textEdit.raise_()
-        self.textEdit_3.raise_()        
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1130, 25))
-        self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-
         # label for the camera
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(950, 50, 720, 480))
@@ -407,6 +411,14 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_2.setObjectName("label_2")
         self.label_2.setStyleSheet("background-color: black; border: 3px solid white;")
         self.label_2.setVisible(False)
+
+        # label for glass 
+        self.label_glass = QtWidgets.QLabel(self.centralwidget)
+        self.label_glass.setGeometry(QtCore.QRect(50, 50, 830, 500))
+        self.label_glass.setObjectName("label_glass")
+        self.label_glass.setStyleSheet("image: url(./glass1.png); ")
+        self.label_glass.setVisible(True)
+
 
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -471,7 +483,7 @@ class Ui_MainWindow(QtCore.QObject):
 
         # table for the vision standard
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
-        self.tableWidget.setGeometry(QtCore.QRect(50, 600, 1200, 250))
+        self.tableWidget.setGeometry(QtCore.QRect(90, 600, 1000, 250))
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(5)
         self.tableWidget.setRowCount(2)
@@ -482,6 +494,33 @@ class Ui_MainWindow(QtCore.QObject):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.tableWidget.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.tableWidget.setVisible(False)
+
+        self.label_glass.raise_()
+        self.label_column.raise_()
+        self.label_column2.raise_()
+        self.pushButton3.raise_()
+        self.pushButton4.raise_()
+        self.pushButton5.raise_()
+        self.pushButton6.raise_()
+        self.label_info.raise_()
+        self.tableWidget.raise_()
+        self.label_2.raise_()
+        self.labelC.raise_()
+        self.textEdit.raise_()
+        self.textEdit_3.raise_()  
+        self.textEdit_5.raise_()  
+        self.label_gesture.raise_() 
+        self.label_arrow.raise_()
+        self.textEdit_2.raise_()
+        self.textEdit_6.raise_()
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1130, 25))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
 
 
 
