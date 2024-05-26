@@ -7,6 +7,7 @@ from qt_material import apply_stylesheet
 import random
 import eyetest_variables as etv
 import time
+import webbrowser
 
 etv.lowest_wrongtimes = -1
 etv.level_now = 0.1
@@ -18,7 +19,7 @@ class Ui_MainWindow(QtCore.QObject):
     update_message_signal = QtCore.pyqtSignal(str)
     update_distance_info_signal = QtCore.pyqtSignal(bool)
     update_image_signal = QtCore.pyqtSignal(QImage)
-    hide_pushbutton2_signal = QtCore.pyqtSignal(bool)
+    startexam_signal = QtCore.pyqtSignal(bool)
     choose_pushbutton3_signal = QtCore.pyqtSignal(bool)
     choose_pushbutton4_signal = QtCore.pyqtSignal(bool)
     stop_gif_signal = QtCore.pyqtSignal(bool)
@@ -55,7 +56,7 @@ class Ui_MainWindow(QtCore.QObject):
         sys.exit()      
 
     # function for hide the start button
-    def hide_pushbutton2(self, visibility):
+    def startexam(self, visibility):
         self.pushButton2.setVisible(not visibility)
         self.pushButton3.setVisible(not visibility)
         self.pushButton4.setVisible(not visibility)
@@ -68,6 +69,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton6.setVisible(not visibility)
         self.label_glass.setVisible(not visibility)
         self.textEdit_5.setVisible(not visibility)
+        self.label_info.setStyleSheet("image: url(./glass2.png); border: 3px solid white;")
         if language_choice == 'Chinese':
             self.textbox_final2.setText(f"視力檢查合格標準請參照下方表格\n\n\n本測驗為居家簡易檢測，數值僅供參考\n如有疑慮請至眼科進行進一步檢查\n\n\nVTABIRD關心您的視力健康")
             item00 = QtWidgets.QTableWidgetItem("年齡")
@@ -163,6 +165,13 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton5.setText("桌機")
         self.pushButton6.setText("筆電")
 
+    # function to click event for github link
+    def click_github(self):
+        webbrowser.open('https://github.com/TKkusa/Project_Design_2')
+
+    def click_youtube(self):
+        webbrowser.open('https://www.youtube.com/channel/UCuypzy4Vy3qpLJAraQYRcTg')
+
     def choose_pushbutton4(self, visibility):
         global language_choice
         if language_choice == 'Chinese':
@@ -207,13 +216,13 @@ class Ui_MainWindow(QtCore.QObject):
     def show_arrow(self, direction):
         self.label_arrow.setVisible(True)
         if direction == 'up':
-            self.label_arrow.setStyleSheet("image: url(./up.png); background-color: black; border: 3px solid white;")
+            self.label_arrow.setStyleSheet("image: url(./up.png); background-color: transparent; border: 3px solid cyan;")
         elif direction == 'down':
-            self.label_arrow.setStyleSheet("image: url(./down.png); background-color: black; border: 3px solid white;")
+            self.label_arrow.setStyleSheet("image: url(./down.png); background-color: transparent; border: 3px solid cyan;")
         elif direction == 'left':
-            self.label_arrow.setStyleSheet("image: url(./left.png); background-color: black; border: 3px solid white;")
+            self.label_arrow.setStyleSheet("image: url(./left.png); background-color: transparent; border: 3px solid cyan;")
         elif direction == 'right':
-            self.label_arrow.setStyleSheet("image: url(./right.png); background-color: black; border: 3px solid white;")
+            self.label_arrow.setStyleSheet("image: url(./right.png); background-color: transparent; border: 3px solid cyan;")
 
 
     def stop_gif(self):
@@ -303,7 +312,34 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_gesture.setGeometry(QtCore.QRect(1150, 580, 580, 400))
         self.label_gesture.setObjectName("label_gesture")
         self.label_gesture.setStyleSheet("image: url(./glass3.png); ")
+
+        # label for logo 
+        self.label_logo = QtWidgets.QLabel(self.centralwidget)
+        self.label_logo.setGeometry(QtCore.QRect(1740, 30, 170, 170))
+        self.label_logo.setObjectName("label_logo")
+        self.label_logo.setStyleSheet("image: url(./logo.png);")
+
+        # label for long strip decoration
+        self.label_strip = QtWidgets.QLabel(self.centralwidget)
+        self.label_strip.setGeometry(QtCore.QRect(1740, 200, 170, 780))
+        self.label_strip.setObjectName("label_strip")
+        self.label_strip.setStyleSheet("image: url(./strip.png); ")
+        self.label_strip.setVisible(True)
         
+        # button for githublink
+        self.button_github = QtWidgets.QPushButton(self.centralwidget)
+        self.button_github.setGeometry(QtCore.QRect(1800, 230, 80, 80))
+        self.button_github.setObjectName("button_github")
+        self.button_github.setStyleSheet("image: url(./githublink.png); border: transparent;") 
+        self.button_github.clicked.connect(self.click_github)
+
+        # button for youtube link
+        self.button_youtube = QtWidgets.QPushButton(self.centralwidget)
+        self.button_youtube.setGeometry(QtCore.QRect(1770, 480, 80, 80))
+        self.button_youtube.setObjectName("button_youtube")
+        self.button_youtube.setStyleSheet("image: url(./youtubelink.png); border: transparent;")
+        self.button_youtube.clicked.connect(self.click_youtube)
+
 
         # button for quit the application
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
@@ -337,9 +373,9 @@ class Ui_MainWindow(QtCore.QObject):
 
         # label for arrow
         self.label_arrow = QtWidgets.QLabel(self.centralwidget)
-        self.label_arrow.setGeometry(QtCore.QRect(1500, 590, 200, 200))
+        self.label_arrow.setGeometry(QtCore.QRect(1350, 590, 200, 200))
         self.label_arrow.setObjectName("label_arrow")
-        self.label_arrow.setStyleSheet("image: url(./up.png); background-color: black; border: 3px solid white;")
+        self.label_arrow.setStyleSheet("image: url(./up.png); background-color: transparent; border: 3px solid cyan;")
         self.label_arrow.setVisible(False)
         self.show_arrow_signal.connect(self.show_arrow)
 
@@ -420,7 +456,6 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_glass.setVisible(True)
 
 
-
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         # connect the signals to the functions
@@ -434,7 +469,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton2.setObjectName("StartButton")
         self.pushButton2.setText("Start")
         self.pushButton2.setStyleSheet("font-size: 14pt;") 
-        self.hide_pushbutton2_signal.connect(self.hide_pushbutton2)
+        self.startexam_signal.connect(self.startexam)
         self.pushButton2.setVisible(False)
         
         #button for change to Chinese
@@ -495,6 +530,16 @@ class Ui_MainWindow(QtCore.QObject):
         self.tableWidget.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.tableWidget.setVisible(False)
 
+
+
+        self.label_loading.raise_()
+        self.label_loadingtext.raise_()
+        self.label_cameraframe.raise_()
+        self.label.raise_()
+        self.label_logo.raise_()
+        self.button_github.raise_()
+        self.button_youtube.raise_()
+
         self.label_glass.raise_()
         self.label_column.raise_()
         self.label_column2.raise_()
@@ -522,7 +567,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-
+        
 
 
         # timer for any event
@@ -964,7 +1009,7 @@ class Ui_MainWindow(QtCore.QObject):
                     # start when OK gesture
                     if distance_thumb_index < 30 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False and self.eye_xdistance >= 115 and self.eye_xdistance <= 130:
                         self.teststart = True
-                        self.hide_pushbutton2_signal.emit(True)
+                        self.startexam_signal.emit(True)
                         if language_choice == 'English':
                             self.update_message_signal.emit("Get ready, please cover left eye and point with your right hand.")
                         elif language_choice == 'Chinese':
