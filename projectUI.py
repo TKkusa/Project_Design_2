@@ -72,6 +72,10 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_5.setVisible(not visibility)
         self.textEdit_2.setVisible(not visibility)
         self.label_info.setStyleSheet("image: url(./glass2.png); border: 3px solid white;")
+        self.label_leftcover.setVisible(True)
+        self.label_rightcover.setVisible(True)
+        self.label_leftcover.setStyleSheet("image: url(./leftcover.png);")
+        self.label_rightcover.setStyleSheet("image: url(./openeye.png);")
         self.quitapp = False
         if language_choice == 'Chinese':
             self.textbox_final2.setText(f"視力檢查合格標準請參照下方表格\n\n\n本測驗為居家簡易檢測，數值僅供參考\n如有疑慮請至眼科進行進一步檢查\n\n\nVTABIRD關心您的視力健康")
@@ -185,7 +189,7 @@ class Ui_MainWindow(QtCore.QObject):
         language_choice = 'English'
         self.textEdit_2.setText("Gesture YA to quit")
         self.textEdit_6.setText("Gesture OK to start")
-        self.textEdit_3.setText("Please choose your preferred language and device.")
+        self.textEdit_3.setText("Please choose your language and device.")
         self.pushButton5.setText("Desktop")
         self.pushButton6.setText("Labtop")
     
@@ -225,6 +229,8 @@ class Ui_MainWindow(QtCore.QObject):
             self.label_arrow.setStyleSheet("image: url(./left.png); background-color: transparent; border: 3px solid cyan;")
         elif direction == 'right':
             self.label_arrow.setStyleSheet("image: url(./right.png); background-color: transparent; border: 3px solid cyan;")
+        elif direction == 'pass':
+            self.label_arrow.setStyleSheet("image: url(./pass.png); background-color: transparent; border: 3px solid cyan;")
 
     def stop_gif(self):
         self.loadingmovie.stop()
@@ -237,18 +243,24 @@ class Ui_MainWindow(QtCore.QObject):
         if self.eye_xdistance < 115:
             if language_choice == 'English':
                 self.textEdit_5.setText("Please move closer to the camera.")
+                self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: yellow;")
             else:
-                self.textEdit_5.setText("請靠近攝影機。")           
+                self.textEdit_5.setText("請靠近攝影機。")   
+                self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: yellow;")        
         elif self.eye_xdistance > 130:
             if language_choice == 'English':
                 self.textEdit_5.setText("Please move away from the camera.")
+                self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: yellow;")
             else:
                 self.textEdit_5.setText("請遠離攝影機。")
+                self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: yellow;")
         else:
             if language_choice == 'English':
                 self.textEdit_5.setText("The distance is appropriate.")
+                self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: cyan;")
             else:
                 self.textEdit_5.setText("距離適當。")
+                self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: cyan;")
 
     # function for updating the message 
     def update_message(self, message):
@@ -276,12 +288,12 @@ class Ui_MainWindow(QtCore.QObject):
 
         # text box for time limit
         self.textEdit = QtWidgets.QPushButton(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(930, 730, 150, 50))
+        self.textEdit.setGeometry(QtCore.QRect(930, 630, 150, 150))
         font = QtGui.QFont()     
         self.textEdit.setFont(font)
         self.textEdit.setObjectName("textEdit")
-        self.textEdit.setText("10s")
-        self.textEdit.setStyleSheet("font-size: 14pt; background-color: transparent;")
+        self.textEdit.setText("10")
+        self.textEdit.setStyleSheet("font-size: 84pt; background-color: transparent;")
 
         # text box for eye distance
         self.textEdit_5 = QtWidgets.QPushButton(self.centralwidget)
@@ -313,6 +325,19 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_gesture.setGeometry(QtCore.QRect(1150, 580, 580, 400))
         self.label_gesture.setObjectName("label_gesture")
         self.label_gesture.setStyleSheet("image: url(./glass3.png); ")
+
+        # label for cover gesture hint left
+        self.label_leftcover = QtWidgets.QLabel(self.centralwidget)
+        self.label_leftcover.setGeometry(QtCore.QRect(1250, 650, 200, 200))
+        self.label_leftcover.setObjectName("label_leftcover")
+        self.label_leftcover.setVisible(False)
+
+        # label for cover gesture hint right
+        self.label_rightcover = QtWidgets.QLabel(self.centralwidget)
+        self.label_rightcover.setGeometry(QtCore.QRect(1450, 650, 200, 200))
+        self.label_rightcover.setObjectName("label_rightcover")
+        self.label_rightcover.setVisible(False)
+        
 
         # label for logo 
         self.label_logo = QtWidgets.QLabel(self.centralwidget)
@@ -376,7 +401,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_arrow = QtWidgets.QLabel(self.centralwidget)
         self.label_arrow.setGeometry(QtCore.QRect(1350, 650, 200, 200))
         self.label_arrow.setObjectName("label_arrow")
-        self.label_arrow.setStyleSheet("image: url(./up.png); background-color: transparent; border: 3px solid cyan;")
+        self.label_arrow.setStyleSheet("image: url(./pass.png); background-color: transparent; border: 3px solid cyan;")
         self.label_arrow.setVisible(False)
         self.show_arrow_signal.connect(self.show_arrow)
 
@@ -621,14 +646,14 @@ class Ui_MainWindow(QtCore.QObject):
     def onTimer(self):
         if self.teststart == True:
             self.counter = self.counter - 1
-            self.textEdit.setText(str(self.counter)+"s")
+            self.textEdit.setText(str(self.counter))
 
             if self.counter == 0:
                 self.labelC.setVisible(True)
+                self.label_leftcover.setVisible(False)
+                self.label_rightcover.setVisible(False)
                 self.pointstart = True
                 self.counter = 3
-
-                print(etv.visionlevel_correctimes, etv.lowest_wrongtimes, etv.level_now)
 
                 self.vision_test()
                 self.check_vision_level()
@@ -646,6 +671,10 @@ class Ui_MainWindow(QtCore.QObject):
         self.counter = 11
         self.labelC.setVisible(False)
         self.label_arrow.setVisible(False)
+        self.label_leftcover.setVisible(True)
+        self.label_rightcover.setVisible(True)
+        self.label_leftcover.setStyleSheet("image: url(./openeye.png);")
+        self.label_rightcover.setStyleSheet("image: url(./rightcover.png);")
         etv.lowest_wrongtimes = -1
         etv.level_now = 0.1
 
@@ -897,7 +926,7 @@ class Ui_MainWindow(QtCore.QObject):
             print("Error: Could not open camera.")
             exit()
         else:
-            self.update_message_signal.emit("Please choose your preferred language and device.")
+            self.update_message_signal.emit("Please choose your language and device.")
             self.stop_gif_signal.emit(True)
             
 
@@ -976,6 +1005,19 @@ class Ui_MainWindow(QtCore.QObject):
                     # Distance between thumb and index finger tip
                     distance_thumb_index = int(((thumb_tip[0] - index_finger_tip[0])**2 + (thumb_tip[1] - index_finger_tip[1])**2)**0.5)
 
+                    # gesture YA for quit the application
+                    if vertical_distance_index < -120 and vertical_distance_middle < -120 and vertical_distance_ring > -30 and vertical_distance_pinky > -30 and self.quitapp == True:
+                        self.quit_signal.emit(True)   
+
+                    # start when OK gesture
+                    if distance_thumb_index < 30 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False and self.eye_xdistance >= 115 and self.eye_xdistance <= 130:
+                        self.teststart = True
+                        self.startexam_signal.emit(True)
+                        if language_choice == 'English':
+                            self.update_message_signal.emit("Get ready, please cover left eye and point with your right hand.")
+                        elif language_choice == 'Chinese':
+                            self.update_message_signal.emit("準備好了嗎？請遮住左眼，用右手指出缺口方向。")  
+
                     # gesture for choosing the language and the device
                     if self.teststart == False :
                         if self.column == 'left':
@@ -997,20 +1039,7 @@ class Ui_MainWindow(QtCore.QObject):
                             if vertical_distance_index > 100:
                                 self.choose_laptop_signal.emit(True)
                             elif vertical_distance_index < -100:
-                                self.choose_desktop_signal.emit(True)
-
-                    # gesture YA for quit the application
-                    if vertical_distance_index < -120 and vertical_distance_middle < -120 and vertical_distance_ring > -30 and vertical_distance_pinky > -30 and self.quitapp == True:
-                        self.quit_signal.emit(True)
-
-                    # start when OK gesture
-                    if distance_thumb_index < 30 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False and self.eye_xdistance >= 115 and self.eye_xdistance <= 130:
-                        self.teststart = True
-                        self.startexam_signal.emit(True)
-                        if language_choice == 'English':
-                            self.update_message_signal.emit("Get ready, please cover left eye and point with your right hand.")
-                        elif language_choice == 'Chinese':
-                            self.update_message_signal.emit("準備好了嗎？請遮住左眼，用右手指出缺口方向。")                                    
+                                self.choose_desktop_signal.emit(True)                               
 
                     # gesture recognition, round 1 right hand
                     if index_length > 70 and self.pointstart == True:
@@ -1049,6 +1078,7 @@ class Ui_MainWindow(QtCore.QObject):
                         elif language_choice == 'Chinese':
                             self.update_message_signal.emit("看不清楚缺口，跳過。")
                         self.pointingdirection = 'pass'
+                        self.show_arrow_signal.emit('pass')
 
 
             # get the frame information
