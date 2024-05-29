@@ -623,14 +623,10 @@ class Ui_MainWindow(QtCore.QObject):
             self.counter = self.counter - 1
             self.textEdit.setText(str(self.counter)+"s")
 
-            if self.counter != 0:
-                self.qsound.play('./SoundEffect&Others/countdown.wav')
-
             if self.counter == 0:
                 self.labelC.setVisible(True)
                 self.pointstart = True
                 self.counter = 3
-                self.qsound.play('./SoundEffect&Others/countdownEnd.wav')
 
                 print(etv.visionlevel_correctimes, etv.lowest_wrongtimes, etv.level_now)
 
