@@ -40,6 +40,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.ocv = True             # open the camera or not
         self.teststart = False      # start the test or not
         self.pointstart = False     # start the pointing or not
+        self.quitapp = True        # quit the application or not
         self.setsize = 150         # original size of the C image
         self.eye_xdistance = 0      # distance between two eyes
         self.imagedirection = ' '   # direction of the C image
@@ -69,7 +70,9 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton6.setVisible(not visibility)
         self.label_glass.setVisible(not visibility)
         self.textEdit_5.setVisible(not visibility)
+        self.textEdit_2.setVisible(not visibility)
         self.label_info.setStyleSheet("image: url(./glass2.png); border: 3px solid white;")
+        self.quitapp = False
         if language_choice == 'Chinese':
             self.textbox_final2.setText(f"視力檢查合格標準請參照下方表格\n\n\n本測驗為居家簡易檢測，數值僅供參考\n如有疑慮請至眼科進行進一步檢查\n\n\nVTABIRD關心您的視力健康")
             item00 = QtWidgets.QTableWidgetItem("年齡")
@@ -150,12 +153,15 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_arrow.setVisible(False)
         self.textbox_final1.setVisible(True)
         self.textbox_final2.setVisible(True)
+        self.textEdit_2.setVisible(True)
+        self.label_column.setVisible(False)
+        self.label_column2.setVisible(False)
+        self.quitapp = True
+        
     
     #function for set the pushbutton3 black
     def choose_pushbutton3(self, visibility):
         global language_choice       
-        if language_choice == 'English':
-            self.qsound.play('./SoundEffect&Others/select.wav')
         self.pushButton3.setStyleSheet("font-size: 14pt; background-color: white;")
         self.pushButton4.setStyleSheet("font-size: 14pt; background-color: transparent;")
         language_choice = 'Chinese'
@@ -174,8 +180,6 @@ class Ui_MainWindow(QtCore.QObject):
 
     def choose_pushbutton4(self, visibility):
         global language_choice
-        if language_choice == 'Chinese':
-            self.qsound.play('./SoundEffect&Others/select.wav')
         self.pushButton3.setStyleSheet("font-size: 14pt; background-color: transparent;")
         self.pushButton4.setStyleSheet("font-size: 14pt; background-color: white;")
         language_choice = 'English'
@@ -188,7 +192,6 @@ class Ui_MainWindow(QtCore.QObject):
     def choose_desktop(self):
         if self.device == 'laptop':
             self.device = 'desktop'
-            self.qsound.play('./SoundEffect&Others/select.wav')
             self.setsize = 100
         self.pushButton5.setStyleSheet("font-size: 14pt; background-color: white;")
         self.pushButton6.setStyleSheet("font-size: 14pt; background-color: transparent;")
@@ -197,7 +200,6 @@ class Ui_MainWindow(QtCore.QObject):
     def choose_laptop(self):
         if self.device == 'desktop':
             self.device = 'laptop'
-            self.qsound.play('./SoundEffect&Others/select.wav')
             self.setsize = 150
         self.pushButton5.setStyleSheet("font-size: 14pt; background-color: transparent;")
         self.pushButton6.setStyleSheet("font-size: 14pt; background-color: white;")
@@ -223,7 +225,6 @@ class Ui_MainWindow(QtCore.QObject):
             self.label_arrow.setStyleSheet("image: url(./left.png); background-color: transparent; border: 3px solid cyan;")
         elif direction == 'right':
             self.label_arrow.setStyleSheet("image: url(./right.png); background-color: transparent; border: 3px solid cyan;")
-
 
     def stop_gif(self):
         self.loadingmovie.stop()
@@ -373,7 +374,7 @@ class Ui_MainWindow(QtCore.QObject):
 
         # label for arrow
         self.label_arrow = QtWidgets.QLabel(self.centralwidget)
-        self.label_arrow.setGeometry(QtCore.QRect(1350, 590, 200, 200))
+        self.label_arrow.setGeometry(QtCore.QRect(1350, 650, 200, 200))
         self.label_arrow.setObjectName("label_arrow")
         self.label_arrow.setStyleSheet("image: url(./up.png); background-color: transparent; border: 3px solid cyan;")
         self.label_arrow.setVisible(False)
@@ -628,7 +629,7 @@ class Ui_MainWindow(QtCore.QObject):
             if self.counter == 0:
                 self.labelC.setVisible(True)
                 self.pointstart = True
-                self.counter = 4
+                self.counter = 3
                 self.qsound.play('./SoundEffect&Others/countdownEnd.wav')
 
                 print(etv.visionlevel_correctimes, etv.lowest_wrongtimes, etv.level_now)
@@ -980,7 +981,7 @@ class Ui_MainWindow(QtCore.QObject):
                     distance_thumb_index = int(((thumb_tip[0] - index_finger_tip[0])**2 + (thumb_tip[1] - index_finger_tip[1])**2)**0.5)
 
                     # gesture for choosing the language and the device
-                    if self.teststart == False:
+                    if self.teststart == False :
                         if self.column == 'left':
                             if horizental_distance_index > 100:
                                 self.column = 'right'
@@ -1003,7 +1004,7 @@ class Ui_MainWindow(QtCore.QObject):
                                 self.choose_desktop_signal.emit(True)
 
                     # gesture YA for quit the application
-                    if vertical_distance_index < -120 and vertical_distance_middle < -120 and vertical_distance_ring > -30 and vertical_distance_pinky > -30:
+                    if vertical_distance_index < -120 and vertical_distance_middle < -120 and vertical_distance_ring > -30 and vertical_distance_pinky > -30 and self.quitapp == True:
                         self.quit_signal.emit(True)
 
                     # start when OK gesture
