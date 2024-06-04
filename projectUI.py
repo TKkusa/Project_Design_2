@@ -78,7 +78,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_rightcover.setStyleSheet("image: url(./openeye.png);")
         self.quitapp = False
         if language_choice == 'Chinese':
-            self.textbox_final2.setText(f"視力檢查合格標準請參照下方表格\n\n\n本測驗為居家簡易檢測，數值僅供參考\n如有疑慮請至眼科進行進一步檢查\n\n\nVTABIRD關心您的視力健康")
+            self.textbox_final2.setText(f"視力檢查合格標準請參照下方表格\n\n\n本測驗為居家簡易檢測，數值僅供參考\n如有疑慮請至眼科進行進一步檢查\n\nVTABIRD關心您的視力健康")
             item00 = QtWidgets.QTableWidgetItem("年齡")
             item00.setTextAlignment(QtCore.Qt.AlignCenter)
             # set the item border color
@@ -240,14 +240,14 @@ class Ui_MainWindow(QtCore.QObject):
     #function for screen to user distance information
     def eye_distance(self):
         global language_choice
-        if self.eye_xdistance < 115:
+        if self.eye_xdistance < 80:
             if language_choice == 'English':
                 self.textEdit_5.setText("Please move closer to the camera.")
                 self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: yellow;")
             else:
                 self.textEdit_5.setText("請靠近攝影機。")   
                 self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: yellow;")        
-        elif self.eye_xdistance > 130:
+        elif self.eye_xdistance > 100:
             if language_choice == 'English':
                 self.textEdit_5.setText("Please move away from the camera.")
                 self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: yellow;")
@@ -293,7 +293,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit.setFont(font)
         self.textEdit.setObjectName("textEdit")
         self.textEdit.setText("10")
-        self.textEdit.setStyleSheet("font-size: 84pt; background-color: transparent;")
+        self.textEdit.setStyleSheet("font-size: 56pt; background-color: transparent;")
 
         # text box for eye distance
         self.textEdit_5 = QtWidgets.QPushButton(self.centralwidget)
@@ -455,7 +455,7 @@ class Ui_MainWindow(QtCore.QObject):
 
         # label for loading text
         self.label_loadingtext = QtWidgets.QLabel(self.centralwidget)
-        self.label_loadingtext.setGeometry(QtCore.QRect(1190, 325, 500, 50))
+        self.label_loadingtext.setGeometry(QtCore.QRect(1150, 325, 500, 50))
         self.label_loadingtext.setObjectName("label_loadingtext")
         self.label_loadingtext.setText("Loading camera...")
         self.label_loadingtext.setStyleSheet("font-size: 25pt; color: cyan;")
@@ -884,9 +884,9 @@ class Ui_MainWindow(QtCore.QObject):
                 elif language_choice == 'Chinese':
                     self.lefteye = f'您的左眼視力等級小於0.1'
                 if language_choice == 'Chinese':
-                    self.textbox_final1.setText(f"檢測結果\n\n\n{self.righteye}\n\n{self.lefteye}")
+                    self.textbox_final1.setText(f"檢測結果 (距離螢幕70~75公分)\n\n\n{self.righteye}\n\n{self.lefteye}")
                 elif language_choice == 'English':
-                    self.textbox_final1.setText(f"Test Results\n\n\n{self.righteye}\n\n{self.lefteye}")
+                    self.textbox_final1.setText(f"Test Results (70~75 cm from user to the screen)\n\n\n{self.righteye}\n\n{self.lefteye}")
                 self.hide_all()
                 self.mytimer.stop()
                 self.pointstart = False
@@ -898,9 +898,9 @@ class Ui_MainWindow(QtCore.QObject):
                     elif language_choice == 'Chinese':
                         self.lefteye = f"您的左眼視力等級約為{level}。"
                     if language_choice == 'Chinese':
-                        self.textbox_final1.setText(f"檢測結果\n\n\n{self.righteye}\n\n{self.lefteye}")
+                        self.textbox_final1.setText(f"檢測結果 (距離螢幕70~75公分)\n\n\n{self.righteye}\n\n{self.lefteye}")
                     elif language_choice == 'English':
-                        self.textbox_final1.setText(f"Test Results\n\n\n{self.righteye}\n\n{self.lefteye}")
+                        self.textbox_final1.setText(f"Test Results (70~75 cm from user to the screen)\n\n\n{self.righteye}\n\n{self.lefteye}")
                     self.hide_all()
                     self.mytimer.stop()
                     self.pointstart = False
@@ -959,6 +959,7 @@ class Ui_MainWindow(QtCore.QObject):
                             righteye = int(detection.location_data.relative_keypoints[0].x * imgwidth), int(detection.location_data.relative_keypoints[0].y * imgheight)
                             self.eye_xdistance = lefteye[0] - righteye[0]
                             self.update_distance_info_signal.emit(True)
+                            print(self.eye_xdistance)
                             
             if result.multi_hand_landmarks:
                 for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
@@ -1010,7 +1011,7 @@ class Ui_MainWindow(QtCore.QObject):
                         self.quit_signal.emit(True)   
 
                     # start when OK gesture
-                    if distance_thumb_index < 30 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False and self.eye_xdistance >= 115 and self.eye_xdistance <= 130:
+                    if distance_thumb_index < 30 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False and self.eye_xdistance >= 80 and self.eye_xdistance <= 100:
                         self.teststart = True
                         self.startexam_signal.emit(True)
                         if language_choice == 'English':
