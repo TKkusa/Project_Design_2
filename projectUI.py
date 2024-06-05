@@ -41,7 +41,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.teststart = False      # start the test or not
         self.pointstart = False     # start the pointing or not
         self.quitapp = True        # quit the application or not
-        self.setsize = 150         # original size of the C image
+        self.setsize = 100         # original size of the C image
         self.eye_xdistance = 0      # distance between two eyes
         self.imagedirection = ' '   # direction of the C image
         self.pointingdirection = '' # direction of the pointing
@@ -63,7 +63,6 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton4.setVisible(not visibility)
         self.textEdit_6.setVisible(not visibility)
         self.label_2.setVisible(True)
-        self.qsound.play('./SoundEffect&Others/Start.wav')
         self.label_column.setVisible(not visibility)
         self.label_column2.setVisible(not visibility)
         self.pushButton5.setVisible(not visibility)
@@ -191,7 +190,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.textEdit_6.setText("Gesture OK to start")
         self.textEdit_3.setText("Please choose your language and device.")
         self.pushButton5.setText("Desktop")
-        self.pushButton6.setText("Labtop")
+        self.pushButton6.setText("Laptop")
     
     def choose_desktop(self):
         if self.device == 'laptop':
@@ -204,7 +203,7 @@ class Ui_MainWindow(QtCore.QObject):
     def choose_laptop(self):
         if self.device == 'desktop':
             self.device = 'laptop'
-            self.setsize = 150
+            self.setsize = 100
         self.pushButton5.setStyleSheet("font-size: 14pt; background-color: transparent;")
         self.pushButton6.setStyleSheet("font-size: 14pt; background-color: white;")
         
@@ -240,14 +239,14 @@ class Ui_MainWindow(QtCore.QObject):
     #function for screen to user distance information
     def eye_distance(self):
         global language_choice
-        if self.eye_xdistance < 80:
+        if self.eye_xdistance < 60:
             if language_choice == 'English':
                 self.textEdit_5.setText("Please move closer to the camera.")
                 self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: yellow;")
             else:
                 self.textEdit_5.setText("請靠近攝影機。")   
                 self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: yellow;")        
-        elif self.eye_xdistance > 100:
+        elif self.eye_xdistance > 80:
             if language_choice == 'English':
                 self.textEdit_5.setText("Please move away from the camera.")
                 self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: yellow;")
@@ -338,7 +337,6 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_rightcover.setObjectName("label_rightcover")
         self.label_rightcover.setVisible(False)
         
-
         # label for logo 
         self.label_logo = QtWidgets.QLabel(self.centralwidget)
         self.label_logo.setGeometry(QtCore.QRect(1740, 30, 170, 170))
@@ -766,82 +764,82 @@ class Ui_MainWindow(QtCore.QObject):
                 if self.pointingdirection == self.imagedirection:  
                     etv.visionlevel_correctimes[etv.level_now] += 1           
                     etv.level_now = 0.2 
-                    self.setsize = 75
+                    self.setsize = 50
                 else:
                     etv.lowest_wrongtimes += 1
-                    self.setsize = 150
+                    self.setsize = 100
             elif etv.level_now == 0.2:
                 if self.pointingdirection == self.imagedirection:
                     etv.visionlevel_correctimes[etv.level_now] += 1
                     etv.level_now = 0.3
-                    self.setsize = 50                       
+                    self.setsize = 33                       
                 else:
                     etv.level_now = 0.1
-                    self.setsize = 150
+                    self.setsize = 100
             elif etv.level_now == 0.3:
                 if self.pointingdirection == self.imagedirection:
                     etv.visionlevel_correctimes[etv.level_now] += 1
                     etv.level_now = 0.4
-                    self.setsize = 38
+                    self.setsize = 25
                 else:
                     etv.level_now = 0.2
-                    self.setsize = 75
+                    self.setsize = 50
             elif etv.level_now == 0.4:
                 if self.pointingdirection == self.imagedirection:
                     etv.visionlevel_correctimes[etv.level_now] += 1
                     etv.level_now = 0.5
-                    self.setsize = 30
+                    self.setsize = 20
                 else:
                     etv.level_now = 0.3
-                    self.setsize = 50
+                    self.setsize = 33
             elif etv.level_now == 0.5:
                 if self.pointingdirection == self.imagedirection:
                     etv.visionlevel_correctimes[etv.level_now] += 1
                     etv.level_now = 0.6
-                    self.setsize = 25
+                    self.setsize = 17
                 else:
                     etv.level_now = 0.4
-                    self.setsize = 38
+                    self.setsize = 25
             elif etv.level_now == 0.6:
                 if self.pointingdirection == self.imagedirection:
                     etv.visionlevel_correctimes[etv.level_now] += 1
                     etv.level_now = 0.7
-                    self.setsize = 23
+                    self.setsize = 14
                 else:
                     etv.level_now = 0.5
-                    self.setsize = 30
+                    self.setsize = 20
             elif etv.level_now == 0.7:
                 if self.pointingdirection == self.imagedirection:
                     etv.visionlevel_correctimes[etv.level_now] += 1
                     etv.level_now = 0.8
-                    self.setsize = 19
+                    self.setsize = 12
                 else:
                     etv.level_now = 0.6
-                    self.setsize = 25
+                    self.setsize = 17
             elif etv.level_now == 0.8:
                 if self.pointingdirection == self.imagedirection:
                     etv.visionlevel_correctimes[etv.level_now] += 1
                     etv.level_now = 0.9
-                    self.setsize = 17
+                    self.setsize = 11
                 else:
                     etv.level_now = 0.7
-                    self.setsize = 23
+                    self.setsize = 14
             elif etv.level_now == 0.9:
                 if self.pointingdirection == self.imagedirection:
 
                     etv.visionlevel_correctimes[etv.level_now] += 1
                     etv.level_now = 1.0
-                    self.setsize = 15
+                    self.setsize = 10
                 else:
                     etv.level_now = 0.8
-                    self.setsize = 19
+                    self.setsize = 12
             elif etv.level_now == 1.0:
                 if self.pointingdirection == self.imagedirection:
                     etv.visionlevel_correctimes[etv.level_now] += 1
-                    self.setsize = 15
+                    self.setsize = 10
                 else:
                     etv.level_now = 0.9
-                    self.setsize = 17
+                    self.setsize = 11
             
 
     # check the vision level of two eyes
@@ -884,9 +882,9 @@ class Ui_MainWindow(QtCore.QObject):
                 elif language_choice == 'Chinese':
                     self.lefteye = f'您的左眼視力等級小於0.1'
                 if language_choice == 'Chinese':
-                    self.textbox_final1.setText(f"檢測結果 (距離螢幕70~75公分)\n\n\n{self.righteye}\n\n{self.lefteye}")
+                    self.textbox_final1.setText(f"檢測結果 (距離螢幕95~100公分)\n\n\n{self.righteye}\n\n{self.lefteye}")
                 elif language_choice == 'English':
-                    self.textbox_final1.setText(f"Test Results (70~75 cm from user to the screen)\n\n\n{self.righteye}\n\n{self.lefteye}")
+                    self.textbox_final1.setText(f"Test Results (95~100 cm from user to the screen)\n\n\n{self.righteye}\n\n{self.lefteye}")
                 self.hide_all()
                 self.mytimer.stop()
                 self.pointstart = False
@@ -898,9 +896,9 @@ class Ui_MainWindow(QtCore.QObject):
                     elif language_choice == 'Chinese':
                         self.lefteye = f"您的左眼視力等級約為{level}。"
                     if language_choice == 'Chinese':
-                        self.textbox_final1.setText(f"檢測結果 (距離螢幕70~75公分)\n\n\n{self.righteye}\n\n{self.lefteye}")
+                        self.textbox_final1.setText(f"檢測結果 (距離螢幕95~100公分)\n\n\n{self.righteye}\n\n{self.lefteye}")
                     elif language_choice == 'English':
-                        self.textbox_final1.setText(f"Test Results (70~75 cm from user to the screen)\n\n\n{self.righteye}\n\n{self.lefteye}")
+                        self.textbox_final1.setText(f"Test Results (95~100 cm from user to the screen)\n\n\n{self.righteye}\n\n{self.lefteye}")
                     self.hide_all()
                     self.mytimer.stop()
                     self.pointstart = False
@@ -1011,7 +1009,7 @@ class Ui_MainWindow(QtCore.QObject):
                         self.quit_signal.emit(True)   
 
                     # start when OK gesture
-                    if distance_thumb_index < 30 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False and self.eye_xdistance >= 80 and self.eye_xdistance <= 100:
+                    if distance_thumb_index < 30 and vertical_distance_middle < -100 and vertical_distance_ring < -100 and vertical_distance_pinky < -100 and self.teststart == False and self.eye_xdistance >= 60 and self.eye_xdistance <= 80:
                         self.teststart = True
                         self.startexam_signal.emit(True)
                         if language_choice == 'English':
@@ -1045,14 +1043,14 @@ class Ui_MainWindow(QtCore.QObject):
                     # gesture recognition, round 1 right hand
                     if index_length > 70 and self.pointstart == True:
                         if (handness_label == "Right" and self.round == 1) or (handness_label == "Left" and self.round == 2):
-                            if vertical_distance_index < -100:
+                            if vertical_distance_index < -80:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing up")
                                 elif language_choice == 'Chinese':
                                     self.update_message_signal.emit("指向上方")
                                 self.pointingdirection = 'up'
                                 self.show_arrow_signal.emit('up')
-                            elif vertical_distance_index > 100:
+                            elif vertical_distance_index > 80:
                                 if language_choice == 'English':
                                     self.update_message_signal.emit("Pointing down")
                                 elif language_choice == 'Chinese':
@@ -1073,7 +1071,7 @@ class Ui_MainWindow(QtCore.QObject):
                                     self.update_message_signal.emit("指向右方")
                                 self.pointingdirection = 'right'
                                 self.show_arrow_signal.emit('right')
-                    elif index_length < 70 and self.pointstart == True:
+                    elif index_length < 50 and self.pointstart == True:
                         if language_choice == 'English':
                             self.update_message_signal.emit("Can't see the notch, pass.")
                         elif language_choice == 'Chinese':
