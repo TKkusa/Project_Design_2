@@ -45,9 +45,9 @@ class Ui_MainWindow(QtCore.QObject):
         self.eye_xdistance = 0      # distance between two eyes
         self.imagedirection = ' '   # direction of the C image
         self.pointingdirection = '' # direction of the pointing
+        self.lefteye = 0.0          # left eye vision
+        self.righteye = 0.0         # right eye vision
         self.cap = None              
-        self.righteye = ''          # result of the right eye
-        self.lefteye = ''           # result of the left eye
         self.column = 'left'        # left or right
         self.device = 'laptop'     # desktop or laptop
 
@@ -78,6 +78,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.quitapp = False
         if language_choice == 'Chinese':
             self.textbox_final2.setText(f"視力檢查合格標準請參照下方表格\n\n\n本測驗為居家簡易檢測，數值僅供參考\n如有疑慮請至眼科進行進一步檢查\n\nVTABIRD關心您的視力健康")
+            self.label_leftresult.setText("左眼")
+            self.label_rightresult.setText("右眼")
             item00 = QtWidgets.QTableWidgetItem("年齡")
             item00.setTextAlignment(QtCore.Qt.AlignCenter)
             # set the item border color
@@ -111,6 +113,8 @@ class Ui_MainWindow(QtCore.QObject):
             self.tableWidget.setItem(1, 4, item14)       
         elif language_choice == 'English':
             self.textbox_final2.setText(f"Please refer to the table below for the standard\n\n\nThis test is a simple self-examination, the values are for reference only\nIf you have any concerns, please go to clinic for further examination\n\n\nVTABIRD cares about your vision health")
+            self.label_leftresult.setText("Left Eye")
+            self.label_rightresult.setText("Right Eye")
             item00 = QtWidgets.QTableWidgetItem("Age")
             item00.setTextAlignment(QtCore.Qt.AlignCenter)
             self.tableWidget.setItem(0, 0, item00)
@@ -154,11 +158,14 @@ class Ui_MainWindow(QtCore.QObject):
         self.pushButton.setVisible(False)
         self.textEdit_5.setVisible(False)
         self.label_arrow.setVisible(False)
-        self.textbox_final1.setVisible(True)
         self.textbox_final2.setVisible(True)
         self.textEdit_2.setVisible(True)
         self.label_column.setVisible(False)
         self.label_column2.setVisible(False)
+        self.label_leftresult.setVisible(True)
+        self.label_rightresult.setVisible(True)
+        self.leftresult.setVisible(True)
+        self.rightresult.setVisible(True)
         self.quitapp = True
         
     
@@ -259,13 +266,14 @@ class Ui_MainWindow(QtCore.QObject):
                 self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: cyan;")
             else:
                 self.textEdit_5.setText("距離適當。")
-                self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: cyan;")
+                self.textEdit_5.setStyleSheet("font-size: 14pt; background-color: transparent; color: cyan;") 
 
     # function for updating the message 
     def update_message(self, message):
         self.textEdit_3.setText(message)   
         self.label_arrow.setVisible(False)  
     
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1920, 1080)
@@ -417,16 +425,38 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_column2.setStyleSheet("background-color: black; border: 3px solid cyan;")
         self.label_column2.setVisible(False)
 
-        
-        # text box for the final result
-        self.textbox_final1 = QtWidgets.QTextEdit(self.centralwidget)
-        self.textbox_final1.setGeometry(QtCore.QRect(50, 50, 800, 200))
-        font = QtGui.QFont()
-        self.textbox_final1.setFont(font)
-        self.textbox_final1.setObjectName("textEdit_4")
-        self.textbox_final1.setText("")
-        self.textbox_final1.setVisible(False)
-        self.textbox_final1.setStyleSheet("font-size: 14pt; background-color: transparent;")
+        # button for left eye result
+        self.leftresult = QtWidgets.QPushButton(self.centralwidget)
+        self.leftresult.setGeometry(QtCore.QRect(50, 100, 250, 150))
+        self.leftresult.setObjectName("leftresult")
+        self.leftresult.setText("Left Eye")
+        self.leftresult.setStyleSheet("font-size: 56pt; background-color: transparent; border: 3px solid cyan;")
+        self.leftresult.setVisible(False)
+
+        # label for left eye result
+        self.label_leftresult = QtWidgets.QLabel(self.centralwidget)
+        self.label_leftresult.setGeometry(QtCore.QRect(50, 50, 100, 50))
+        self.label_leftresult.setObjectName("label_leftresult")
+        self.label_leftresult.setText("Left Eye")
+        self.label_leftresult.setStyleSheet("font-size: 14pt; background-color: transparent; color: cyan;")
+        self.label_leftresult.setVisible(False)
+
+        # button for right eye result
+        self.rightresult = QtWidgets.QPushButton(self.centralwidget)
+        self.rightresult.setGeometry(QtCore.QRect(330, 100, 250, 150))
+        self.rightresult.setObjectName("rightresult")
+        self.rightresult.setText("Right Eye")
+        self.rightresult.setStyleSheet("font-size: 56pt; background-color: transparent; border: 3px solid cyan;")
+        self.rightresult.setVisible(False)
+
+        # label for right eye result
+        self.label_rightresult = QtWidgets.QLabel(self.centralwidget)
+        self.label_rightresult.setGeometry(QtCore.QRect(330, 50, 100, 50))
+        self.label_rightresult.setObjectName("label_rightresult")
+        self.label_rightresult.setText("Right Eye")
+        self.label_rightresult.setStyleSheet("font-size: 14pt; background-color: transparent; color: cyan;")
+        self.label_rightresult.setVisible(False)
+
 
         # text box 2 for the final result
         self.textbox_final2 = QtWidgets.QTextEdit(self.centralwidget)
@@ -840,6 +870,7 @@ class Ui_MainWindow(QtCore.QObject):
                 else:
                     etv.level_now = 0.9
                     self.setsize = 11
+            print(etv.visionlevel_correctimes)
             
 
     # check the vision level of two eyes
@@ -847,58 +878,36 @@ class Ui_MainWindow(QtCore.QObject):
         global language_choice
         if self.round == 1:
             if etv.lowest_wrongtimes == 3:
-                # show the result
-                if language_choice == 'English':
-                    self.righteye = f'Your right eye vision level is less than 0.1'
-                elif language_choice == 'Chinese':
-                    self.righteye = f'您的右眼視力等級小於0.1'    
+                self.rightresult.setText("<0.1")
                 if language_choice == 'English':
                     self.textEdit_3.setText("Round 2, please cover your right eye and point with your left hand.")       
                 elif language_choice == 'Chinese':
                     self.textEdit_3.setText("第二輪，請遮住右眼，用左手指出缺口方向。")
-            
                 # initialize
                 self.reset_and_init()
                 self.testeye_now = 'left'
             for level, times in etv.visionlevel_correctimes.items():
                 if times >= 3:
-                    # show the result
-                    if language_choice == 'English':
-                        self.righteye = f"Your right eye vision level is approximately {level}."
-                    elif language_choice == 'Chinese':
-                        self.righteye = f"您的右眼視力等級約為{level}。"
+                    self.rightresult.setText(str(level))
+                    self.righteye = level
                     if language_choice == 'English':
                         self.textEdit_3.setText("Round 2, please cover your right eye and point with your left hand.")
                     elif language_choice == 'Chinese':
                         self.textEdit_3.setText("第二輪，請遮住右眼，用左手指出缺口方向.")
-
                     # initialize
                     self.reset_and_init()
                     self.testeye_now = 'left'
         elif self.round == 2:    
             if etv.lowest_wrongtimes == 3:
-                if language_choice == 'English':
-                    self.lefteye = f'Your left eye vision level is less than 0.1'
-                elif language_choice == 'Chinese':
-                    self.lefteye = f'您的左眼視力等級小於0.1'
-                if language_choice == 'Chinese':
-                    self.textbox_final1.setText(f"檢測結果 (距離螢幕95~100公分)\n\n\n{self.righteye}\n\n{self.lefteye}")
-                elif language_choice == 'English':
-                    self.textbox_final1.setText(f"Test Results (95~100 cm from user to the screen)\n\n\n{self.righteye}\n\n{self.lefteye}")
+                self.leftresult.setText("<0.1")
                 self.hide_all()
                 self.mytimer.stop()
                 self.pointstart = False
                 self.tableWidget.setVisible(True)
             for level, times in etv.visionlevel_correctimes.items():
                 if times >= 3:
-                    if language_choice == 'English':
-                        self.lefteye = f"Your left eye vision level is approximately {level}."
-                    elif language_choice == 'Chinese':
-                        self.lefteye = f"您的左眼視力等級約為{level}。"
-                    if language_choice == 'Chinese':
-                        self.textbox_final1.setText(f"檢測結果 (距離螢幕95~100公分)\n\n\n{self.righteye}\n\n{self.lefteye}")
-                    elif language_choice == 'English':
-                        self.textbox_final1.setText(f"Test Results (95~100 cm from user to the screen)\n\n\n{self.righteye}\n\n{self.lefteye}")
+                    self.leftresult.setText(str(level))
+                    self.lefteye = level
                     self.hide_all()
                     self.mytimer.stop()
                     self.pointstart = False
@@ -957,8 +966,7 @@ class Ui_MainWindow(QtCore.QObject):
                             righteye = int(detection.location_data.relative_keypoints[0].x * imgwidth), int(detection.location_data.relative_keypoints[0].y * imgheight)
                             self.eye_xdistance = lefteye[0] - righteye[0]
                             self.update_distance_info_signal.emit(True)
-                            print(self.eye_xdistance)
-                            
+            
             if result.multi_hand_landmarks:
                 for hand_idx, handLms in enumerate(result.multi_hand_landmarks):
                     # get the handness 
@@ -1041,41 +1049,21 @@ class Ui_MainWindow(QtCore.QObject):
                                 self.choose_desktop_signal.emit(True)                               
 
                     # gesture recognition, round 1 right hand
-                    if index_length > 70 and self.pointstart == True:
+                    if index_length > 50 and self.pointstart == True:
                         if (handness_label == "Right" and self.round == 1) or (handness_label == "Left" and self.round == 2):
                             if vertical_distance_index < -80:
-                                if language_choice == 'English':
-                                    self.update_message_signal.emit("Pointing up")
-                                elif language_choice == 'Chinese':
-                                    self.update_message_signal.emit("指向上方")
                                 self.pointingdirection = 'up'
                                 self.show_arrow_signal.emit('up')
                             elif vertical_distance_index > 80:
-                                if language_choice == 'English':
-                                    self.update_message_signal.emit("Pointing down")
-                                elif language_choice == 'Chinese':
-                                    self.update_message_signal.emit("指向下方")
                                 self.pointingdirection = 'down'
                                 self.show_arrow_signal.emit('down')
                             elif horizental_distance_index < -50:
-                                if language_choice == 'English':
-                                    self.update_message_signal.emit("Pointing left")
-                                elif language_choice == 'Chinese':
-                                    self.update_message_signal.emit("指向左方")
                                 self.pointingdirection = 'left'
                                 self.show_arrow_signal.emit('left')
                             elif horizental_distance_index > 50:
-                                if language_choice == 'English':
-                                    self.update_message_signal.emit("Pointing right")
-                                elif language_choice == 'Chinese':
-                                    self.update_message_signal.emit("指向右方")
                                 self.pointingdirection = 'right'
                                 self.show_arrow_signal.emit('right')
                     elif index_length < 50 and self.pointstart == True:
-                        if language_choice == 'English':
-                            self.update_message_signal.emit("Can't see the notch, pass.")
-                        elif language_choice == 'Chinese':
-                            self.update_message_signal.emit("看不清楚缺口，跳過。")
                         self.pointingdirection = 'pass'
                         self.show_arrow_signal.emit('pass')
 
