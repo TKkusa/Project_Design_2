@@ -15,7 +15,7 @@ Something can do vision test at home
 <summary>Backend process</summary>
   
 - Estimate the distance between user and camera before test
-  - Still discussion
+  - MediaPipe face detection
 - Pose detection
   - Detect user's finger pointing or palm swinging direction  
 - Vision test mechanism
