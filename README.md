@@ -27,7 +27,7 @@ Something can do vision test at home
 ## Tools and APIs
 | Works | Methods |
 | ----- | ------ |
-| Pose detection  | Openpose, Opencv  |
+| Gesture detection  | OpenCV, MediaPipe  |
 | User Interface  | PyQt5  |
 
 ## Others
